@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="BenikUI_FloatText" Description="">
+    <Script Name="BenikUI_FloatText.lua"/>
+    <Script Name="FloatTextPanel.lua"/>
+    <Form Name="TestFloatTextForms.xml"/>
+    <Form Name="FloatTextPanel.xml"/>
+    <ReplaceAddon Name="FloatText"/>
+</Addon>

@@ -217,6 +217,8 @@ function BenikUI_Unitframes:LoadOptions(wnd)
 					nextOption:FindChild("Swatch"):SetBGColor(l)
 				end
 			end
+		elseif i == "General" then
+			next:FindChild("Model"):SetCheck(j.Model)
 		end
 	end
 end
@@ -228,6 +230,8 @@ function BenikUI_Unitframes:LoadPlayer()
 	model:SetCostume(player)
 	model:SetData(player)
 	
+	--Model
+	self.wndUnit:FindChild("PicModel"):Show(self.Options.db.profile.Unitframes.General.Model)
 	--Name
 	self.wndUnit:FindChild("Frame:Bars:Health:Name"):SetText(player:GetName())
 	--BuffBars
@@ -274,7 +278,8 @@ function BenikUI_Unitframes:LoadTarget()
 	local player = self.unitTarget
 	local model  = self.wndTarget:FindChild("Frame:PicModel:TargetModel")
 	
-	
+	--Model
+	self.wndTarget:FindChild("PicModel"):Show(self.Options.db.profile.Unitframes.General.Model)
 	model:SetCostume(player)
 	model:SetData(player)
 	
@@ -317,6 +322,8 @@ function BenikUI_Unitframes:LoadToT()
 	local player = self.unitToT
 	local model  = self.wndTarget:FindChild("ToT:PicModel:TargetModelMini")
 	
+	--Model
+	self.wndTarget:FindChild("ToT:PicModel"):Show(self.Options.db.profile.Unitframes.General.Model)
 	model:SetCostume(player)
 	model:SetData(player)
 	
@@ -334,7 +341,8 @@ function BenikUI_Unitframes:LoadAltTarget()
 	local player = GameLib.GetPlayerUnit():GetAlternateTarget()
 	local model  = self.wndAltTarget:FindChild("Frame:PicModel:TargetModel")
 	
-	
+	--Model
+	self.wndAltTarget:FindChild("PicModel"):Show(self.Options.db.profile.Unitframes.General.Model)
 	model:SetCostume(player)
 	model:SetData(player)
 	
@@ -710,6 +718,16 @@ function BenikUI_Unitframes:OnColorToT(wndHandler)
 	self.colorPicker:Show(true)
   	self.colorPicker:ToFront()
 end
+
+
+function BenikUI_Unitframes:OnShowModel( wndHandler, wndControl, eMouseButton )
+	self.Options.db.profile.Unitframes.General.Model = wndHandler:IsChecked()
+	self:LoadPlayer()
+	if self.unitTarget~= nil then
+		self:LoadTarget()
+	end
+end
+
 
 -----------------------------------------------------------------------------------------------
 -- Utils

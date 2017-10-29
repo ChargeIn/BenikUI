@@ -31,11 +31,21 @@ local tBenikUIDefaults = {
 		general = {
 			ThemeColor = "xkcdOrange",
 		},
+		FloatText = {
+			DMG = 0x00ffff,
+			Crit =  0xfffb93,
+			Heal = 0xb0ff6a,
+			HealShield = 0x6afff3,
+			DMGTaken = 0xe5feff,
+			},
 		Unitframes = {
 			--nText = 2,
 			UnitFrame = 		{-467,-327,-109,-223},
 			AltTargetFrame = 	{-165,-432, 193,-328},
 			TargetFrame =		{ 109,-327, 467,-223},
+			General =			{
+				Model =				true,
+				},
 			Player = 			{
 				HealthText =		"white",
 				fullHealth = 		"black",
