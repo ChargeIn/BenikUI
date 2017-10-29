@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="BenikUI_Unitframes" Description="">
+    <Script Name="BenikUI_Unitframes.lua"/>
+    <Form Name="BenikUI_Unitframes.xml"/>
+    <ReplaceAddon Name="TargetFrame"/>
+</Addon>

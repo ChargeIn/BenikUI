@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="BenikUI_Menu" Description="">
+    <Script Name="BenikUI_Menu.lua"/>
+    <Form Name="BenikUI_Menu.xml"/>
+    <ReplaceAddon Name="InterfaceMenuList"/>
+</Addon>
