@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="BenikUI_Nameplates" Description="">
+    <Script Name="BenikUI_Nameplates.lua"/>
+    <Form Name="BenikUI_Nameplates.xml"/>
+    <ReplaceAddon Name="Nameplates"/>
+</Addon>

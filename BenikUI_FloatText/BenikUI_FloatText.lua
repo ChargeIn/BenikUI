@@ -161,8 +161,7 @@ function BenikUI_FloatText:LoadOptions(wnd)
 	
 	--Filling Options
 	for i,j in pairs(self.Options.db.profile.FloatText) do
-		SendVarToRover("s", ("ff%x"):format(j))
-		self.wndOption:FindChild(i):FindChild("Swatch"):SetBGColor(newColor)--string.format("%x",tostring(j)))
+		self.wndOption:FindChild(i):FindChild("Swatch"):SetBGColor(("ff%.6x"):format(j))
 	end
 end
 ---------------------------------------------------------------------------------------------------
@@ -808,7 +807,7 @@ function BenikUI_FloatText:OnDamageOrHealing( unitCaster, unitTarget, eDamageTyp
 		nBaseColor = Options.Crit
 		fMaxSize = 1.0
 	elseif not bHeal and (unitTarget:IsInCCState( Unit.CodeEnumCCState.Vulnerability ) or eDamageType == knTestingVulnerable ) then -- vuln not crit
-		nBaseColor = Options.Crit
+		nBaseColor = 0xf5a2ff
 	else -- normal damage
 		if eDamageType == GameLib.CodeEnumDamageType.Heal then -- healing params
 			nBaseColor = Options.Heal
@@ -943,7 +942,7 @@ function BenikUI_FloatText:OnPlayerDamageOrHealing(unitPlayer, eDamageType, nDam
 
 		if bCritical then
 			fMaxSize = 1.2
-			nBaseColor = Options.Crit
+			nBaseColor = Options.DMGTaken
 			nHighlightColor = 0xFFFFFF
 			fMaxDuration = .75
 		end
@@ -1259,7 +1258,6 @@ function BenikUI_FloatText:OnColor( wndHandler, wndControl, eMouseButton )
   	self.colorPicker:ToFront()
 end
 function BenikUI_FloatText:ColorPickerCallback(strColor)
-	SendVarToRover("w",strColor)
 	self.Options.db.profile.FloatText[self.UpdateSave] = tonumber(strColor:sub(3),16)
 	self.Update:SetBGColor(strColor)
 end

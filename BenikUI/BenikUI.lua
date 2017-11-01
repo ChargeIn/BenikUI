@@ -31,12 +31,48 @@ local tBenikUIDefaults = {
 		general = {
 			ThemeColor = "xkcdOrange",
 		},
+		Resources = {
+			Engineer = {
+				BarColor = 		"xkcdLightKhaki",
+				InZone = 		"xkcdAcidGreen",
+				TextZone =		"xkcdOrange",	
+			},
+			Esper = {
+				BarColor =		"xkcdLightKhaki",
+			},
+			Medic = {
+				BarColor =		"xkcdLightKhaki",
+			},
+			Slinger = {
+				BarColor =		"xkcdLightKhaki",
+				Innate =		"xkcdAcidGreen",	
+			},
+			Warrior = {
+				BarColor = 		"xkcdLightKhaki",
+				InZone = 		"xkcdAcidGreen",
+				TextZone =		"xkcdOrange",	
+			},
+			Stalker = {
+				BarColor =		"xkcdLightKhaki",
+				Innate =		"xkcdDarkMagenta",
+			},
+		},
 		FloatText = {
 			DMG = 0x00ffff,
 			Crit =  0xfffb93,
 			Heal = 0xb0ff6a,
 			HealShield = 0x6afff3,
 			DMGTaken = 0xe5feff,
+			},
+		Nameplates = {
+			fullHealth = 		"xkcdDarkSlateBlue",
+			halfHealth = 		"xkcdOrange",
+			lowHealth = 		"xkcdDarkRed",
+			Shield =			"CeruleanBlue",
+			AbsorbBar = 		"Amber",
+			Moo = 				"xkcdDarkMagenta",
+			friendly =			true,
+			hostile =			false,
 			},
 		Unitframes = {
 			--nText = 2,
@@ -48,9 +84,9 @@ local tBenikUIDefaults = {
 				},
 			Player = 			{
 				HealthText =		"white",
-				fullHealth = 		"black",
-				halfHealth = 		"black",
-				lowHealth = 		"red",
+				fullHealth = 		"xkcdDarkSlateBlue",
+				halfHealth = 		"xkcdOrange",
+				lowHealth = 		"xkcdDarkRed",
 				HealthClamp = 		"white",
 				HealingAbsorb = 	"xkcdLipstickRed",
 				Moo = 				"xkcdDarkMagenta",
@@ -60,9 +96,9 @@ local tBenikUIDefaults = {
 				},
 			Target = 			{
 				HealthText =		"white",
-				fullHealth = 		"black",
-				halfHealth = 		"black",
-				lowHealth = 		"red",
+				fullHealth = 		"xkcdDarkSlateBlue",
+				halfHealth = 		"xkcdOrange",
+				lowHealth = 		"xkcdDarkRed",
 				HealthClamp = 		"white",
 				HealingAbsorb = 	"xkcdLipstickRed",
 				Moo = 				"xkcdDarkMagenta",
@@ -72,9 +108,9 @@ local tBenikUIDefaults = {
 				},
 			Focus = 			{
 				HealthText =		"white",
-				fullHealth = 		"black",
-				halfHealth = 		"black",
-				lowHealth = 		"red",
+				fullHealth = 		"xkcdDarkSlateBlue",
+				halfHealth = 		"xkcdOrange",
+				lowHealth = 		"xkcdDarkRed",
 				HealthClamp = 		"white",
 				HealingAbsorb = 	"xkcdLipstickRed",
 				Moo = 				"xkcdDarkMagenta",
@@ -84,9 +120,9 @@ local tBenikUIDefaults = {
 				},	
 			ToT = 			{
 				HealthText =		"white",
-				fullHealth = 		"black",
-				halfHealth = 		"black",
-				lowHealth = 		"red",
+				fullHealth = 		"xkcdDarkSlateBlue",
+				halfHealth = 		"xkcdOrange",
+				lowHealth = 		"xkcdDarkRed",
 				HealthClamp = 		"white",
 				HealingAbsorb = 	"xkcdLipstickRed",
 				Moo = 				"xkcdDarkMagenta",

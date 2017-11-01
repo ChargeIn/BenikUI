@@ -177,6 +177,7 @@ function BenikUI_Unitframes:ThemeUpdateToT()
 	wnd:FindChild("HealthEditBox"):SetTextColor(Options.HealthText)
 	wnd:FindChild("ShieldEditBox"):SetTextColor(Options.Shield)
 	wnd:FindChild("HealthClampMin"):SetBarColor(Options.HealthClamp)
+	wnd:FindChild("HealthClampMax"):SetBarColor(Options.HealthClamp)
 	wnd:FindChild("HealingAbsorb"):SetBarColor(Options.HealingAbsorb)
 	wnd:FindChild("Moo"):SetBarColor(Options.Moo)
 	wnd:FindChild("FocusBar"):SetBarColor(Options.Focus)
@@ -187,6 +188,7 @@ function BenikUI_Unitframes:ThemeUpdate(wnd,name)
 	wnd:FindChild("HealthEditBox"):SetTextColor(Options.HealthText)
 	wnd:FindChild("ShieldEditBox"):SetTextColor(Options.Shield)
 	wnd:FindChild("HealthClampMin"):SetBarColor(Options.HealthClamp)
+	wnd:FindChild("HealthClampMax"):SetBarColor(Options.HealthClamp)
 	wnd:FindChild("HealingAbsorb"):SetBarColor(Options.HealingAbsorb)
 	wnd:FindChild("Moo"):SetBarColor(Options.Moo)
 	wnd:FindChild("FocusBar"):SetBarColor(Options.Focus)
@@ -484,7 +486,15 @@ function BenikUI_Unitframes:UpdatedFrame(wndUnit, newUnit,name)
 	local clampBar = Bars:FindChild("Health:HealthClampMin")
 	if nHealthClampMin ~= 0 then
 		clampBar:SetMax(nMaxHealth)
-		clampBar:SetProgress(nHealthClampMin,1)
+		clampBar:SetProgress(nHealthClampMin)
+	else
+		clampBar:SetProgress(0)
+	end
+	local nHealthClampMax = newUnit:GetHealthCeiling()or 0
+	clampBar = Bars:FindChild("Health:HealthClampMax")
+	if nHealthClampMax ~= 0 then
+		clampBar:SetMax(nMaxHealth)
+		clampBar:SetProgress(nMaxHealth-nHealthClampMax)
 	else
 		clampBar:SetProgress(0)
 	end

@@ -110,8 +110,6 @@ function BenikUI_Menu:OnDocumentReady()
 
 	self:ButtonListRedraw()
 
-	local nFortuneCoinAmount = AccountItemLib.GetAccountCurrency(AccountItemLib.CodeEnumAccountCurrency.MysticShiny):GetAmount()
-	self.wndMain:FindChild("CoinsPendingAnim"):Show(nFortuneCoinAmount > 0)
 
 	if GameLib.GetPlayerUnit() then
 		self:OnCharacterCreated()
@@ -128,10 +126,6 @@ function BenikUI_Menu:OnCharacterCreated()
 end
 
 function BenikUI_Menu:OnAccountCurrencyChanged()
-	if self.wndMain ~= nil and self.wndMain:IsValid() then
-		local nFortuneCoinAmount = AccountItemLib.GetAccountCurrency(AccountItemLib.CodeEnumAccountCurrency.MysticShiny):GetAmount()
-		self.wndMain:FindChild("CoinsPendingAnim"):Show(nFortuneCoinAmount > 0)
-	end
 end
 
 function BenikUI_Menu:OnNewAddonListed(strKey, tParams)

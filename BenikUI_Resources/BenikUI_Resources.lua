@@ -5,6 +5,8 @@
 
 require "Window"
 
+local OptionList = {"Medic","Slinger","Stalker","Esper","Engineer","Warrior"}
+
 local BenikUI_Resources = {}
 
 local knSaveVersion = 1
@@ -54,6 +56,18 @@ function BenikUI_Resources:OnDocumentReady()
 	if self.xmlDoc == nil then
 		return
 	end
+	self.Options = Apollo.GetAddon("BenikUI")
+	if self.Options == nil then
+		Apollo.AddAddonErrorText(self, "Could not find main BanikUi Window.")
+		return
+	end
+	--Register in Options
+	self.Options:RegisterAddon("Resources")
+	--Color Picker
+	GeminiColor = Apollo.GetPackage("GeminiColor").tPackage
+	self.colorPicker = GeminiColor:CreateColorPicker(self, "ColorPickerCallback", false, "ffffffff")
+	self.colorPicker:Show(false, true)
+	
 
 	self.bDocLoaded = true
 	self:OnRequiredFlagsChanged()
@@ -74,7 +88,7 @@ function BenikUI_Resources:OnCharacterCreated()
 	if not unitPlayer then
 		return
 	end
-
+	
 	local eClassId =  unitPlayer:GetClassId()
 	if eClassId == GameLib.CodeEnumClass.Engineer then
 		self:OnCreateEngineer()
@@ -88,6 +102,88 @@ function BenikUI_Resources:OnCharacterCreated()
 		self:OnCreateWarrior()
 	elseif unitPlayer:GetClassId() == GameLib.CodeEnumClass.Stalker then
 		self:OnCreateStalker()
+	end
+end
+
+function BenikUI_Resources:LoadOptions(wnd)
+	local MainGrid = wnd:FindChild("MainGrid")
+	local OptList = wnd:FindChild("OptionsList")
+	OptList:DestroyChildren()
+	
+	for i,j in pairs(OptionList) do
+		local newOption = Apollo.LoadForm(self.xmlDoc, "ListItem", OptList,self)
+		newOption:SetText(j)
+	end
+	
+	OptList:ArrangeChildrenVert()
+	self.wndOption = Apollo.LoadForm(self.xmlDoc, "OptionsFrame", MainGrid,self)
+		--Filling Options
+	for k,v in pairs(self.Options.db.profile.Resources)do
+		local Controls = self.wndOption:FindChild(k.."Controls")
+		for i,j in pairs(v) do
+			local next = Controls:FindChild(i)
+			if next ~= nil  then
+				next:FindChild("Swatch"):SetBGColor(j)
+			end
+		end
+	end
+end
+
+function BenikUI_Resources:OnListItemClick( wndHandler, wndControl, eMouseButton )
+	for i,j in pairs(self.wndOption:GetChildren()) do
+		if j:GetName() == wndHandler:GetText().."Controls" then
+			j:Show(true)
+		else
+			j:Show(false)
+		end
+	end
+end
+
+function BenikUI_Resources:ColorPickerCallback(strColor)
+	self.Options.db.profile.Resources[self.UpdateSave[1]][self.UpdateSave[2]] = strColor
+	self.Update:SetBGColor(strColor)
+	
+	self:UpdateBars()
+end
+
+function BenikUI_Resources:OnColorPlayer(wndHandler)
+	local name = wndHandler:GetParent():GetName()
+	local main = wndHandler:GetParent():GetParent():GetName()
+	if main == "SlingerControls" then
+		main = "Slinger"
+	elseif main == "WarriorControls" then
+		main = "Warrior"
+	elseif main == "MedicControls" then
+		main = "Medic"
+	elseif main == "EsperControls" then
+		main = "Esper"
+	elseif main == "EngineerControls" then
+		main = "Engineer"
+	else--Stalker
+		main = "Stalker"
+	end
+	self.UpdateSave = {main,name}
+	self.Update = wndHandler
+	self.colorPicker:Show(true)
+  	self.colorPicker:ToFront()
+end
+
+function BenikUI_Resources:UpdateBars()
+	local main = self.wndMain:GetName()
+	if main == "MedicResourceForm" then
+		self.wndMain:FindChild("ProgressBar"):SetBarColor(self.Options.db.profile.Resources.Medic.BarColor)
+	elseif main == "EsperResourceForm" then
+		self.wndMain:FindChild("ProgressBar"):SetBarColor(self.Options.db.profile.Resources.Esper.BarColor)
+	elseif main == "EngineerResourceForm" then
+		self.wndMain:FindChild("ProgressBar"):SetBarColor(self.Options.db.profile.Resources.Engineer.BarColor)
+	elseif main == "WarriorResourceForm" then
+		self.wndMain:FindChild("ChargeBar"):SetBarColor(self.Options.db.profile.Resources.Warrior.BarColor)
+		self.wndMain:FindChild("ChargeBarOverdriven"):SetBarColor(self.Options.db.profile.Resources.Warrior.InZone)
+	elseif main == "SlingerResourceForm" then
+		self.wndMain:FindChild("ProgressBar"):SetBarColor(self.Options.db.profile.Resources.Slinger.BarColor)
+	elseif main == "StalkerResourceForm" then
+		self.wndMain:FindChild("CenterMeter1"):SetBarColor(self.Options.db.profile.Resources.Stalker.BarColor)
+		self.wndMain:FindChild("Innate"):SetBGColor(self.Options.db.profile.Resources.Stalker.Innate)
 	end
 end
 
@@ -123,7 +219,8 @@ function BenikUI_Resources:OnCreateEsper()
 	self.nComboCurrent = nil
 	self.bInnate = nil
 	self.nFadeLevel = 0
-	self.xmlDoc = nil
+	
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnEsperBuffAdded(unit, tBuff, nCout)
@@ -207,12 +304,12 @@ function BenikUI_Resources:OnCreateSlinger()
 	self.bInnate = nil
 	self.nLastFocus = nil
 	self.nFadeLevel = 0
-	self.xmlDoc = nil
 
 	local unitPlayer = GameLib.GetPlayerUnit()
 	if unitPlayer then
 		self:OnSlingerEnteredCombat(unitPlayer, unitPlayer:IsInCombat())
 	end
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnSlingerUpdateTimer()
@@ -237,10 +334,11 @@ function BenikUI_Resources:OnSlingerUpdateTimer()
 
 	-- Surge
 	if bInnate then
-		self.tWindowMap["ProgressBar"]:SetBarColor("AttributeStamina")
+		self.tWindowMap["ProgressBar"]:SetBarColor(self.Options.db.profile.Resources.Slinger.Innate)
 	else
-		self.tWindowMap["ProgressBar"]:SetBarColor("black")
+		self.tWindowMap["ProgressBar"]:SetBarColor(self.Options.db.profile.Resources.Slinger.BarColor)
 	end
+	
 end
 
 function BenikUI_Resources:OnSlingerEnteredCombat(unitPlayer, bInCombat)
@@ -272,13 +370,14 @@ function BenikUI_Resources:OnCreateMedic()
 	self.bInnate = nil
 	self.nLastPartialCount = nil
 	self.bCombat = nil
-	self.xmlDoc = nil
 
 	local unitPlayer = GameLib.GetPlayerUnit()
 	if unitPlayer then
 		self.bCombat = unitPlayer:IsInCombat()
 		self:OnMedicEnteredCombat(unitPlayer, self.bCombat)
 	end
+	
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnMedicUpdateTimer()
@@ -343,7 +442,8 @@ function BenikUI_Resources:OnCreateStalker()
 	self.nLastCurrent = nil
 	self.nLastMax = nil
 	self.bInnate = nil
-	self.xmlDoc = nil
+	
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnStalkerUpdateTimer()
@@ -417,7 +517,8 @@ function BenikUI_Resources:OnCreateWarrior()
 	self.nLastMax = nil
 	self.bLastOverDrive = nil
 	self.bOverDriveActive = false
-	self.xmlDoc = nil
+	
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnWarriorUpdateTimer()
@@ -523,7 +624,8 @@ function BenikUI_Resources:OnCreateEngineer()
 
 	self.bLastInCombat = nil
 	self.nLastCurrent = nil
-	self.xmlDoc = nil
+	
+	self:UpdateBars()
 end
 
 function BenikUI_Resources:OnEngineerUpdateTimer()
@@ -546,19 +648,24 @@ function BenikUI_Resources:OnEngineerUpdateTimer()
 	self.tWindowMap["ProgressText"]:SetText(String_GetWeaselString(Apollo.GetString("CRB_ProgressSimple"), nResourceCurrent, nResourceMax))
 	self.tWindowMap["ProgressBacker"]:Show(nResourcePercent >= 0.4 and nResourcePercent <= 0.6)
 
-
+	local Engineer = self.Options.db.profile.Resources.Engineer
 	if nResourcePercent > 0 and nResourcePercent < 0.3 then
 		self.tWindowMap["ProgressText"]:SetTextColor("white")
+		self.tWindowMap["ProgressBar"]:SetBarColor(Engineer.BarColor)
 	elseif nResourcePercent >= 0.3 and nResourcePercent <= 0.7 then
-		self.tWindowMap["ProgressText"]:SetTextColor("AttributeName")
+		self.tWindowMap["ProgressText"]:SetTextColor(Engineer.TextZone)
+		self.tWindowMap["ProgressBar"]:SetBarColor(Engineer.InZone)
 	elseif nResourcePercent > 0.7 then
 		self.tWindowMap["ProgressText"]:SetTextColor("white")
+		self.tWindowMap["ProgressBar"]:SetBarColor(Engineer.BarColor)
 	else
 		self.tWindowMap["ProgressText"]:SetTextColor("white")
+		self.tWindowMap["ProgressBar"]:SetBarColor(Engineer.BarColor)
 	end
 
 	if GameLib.IsCurrentInnateAbilityActive() then
-		self.tWindowMap["ProgressText"]:SetTextColor("AttributeName")	
+		self.tWindowMap["ProgressText"]:SetTextColor(Engineer.TextZone)
+		self.tWindowMap["ProgressBar"]:SetBarColor(Engineer.InZone)	
 	end
 end
 
