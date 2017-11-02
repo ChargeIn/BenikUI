@@ -644,8 +644,9 @@ function BenikUI_Nameplates:OnFrame()
 			if tNameplate.bShowHealth then
 				fnHealth(self, tNameplate.wnd.health, tNameplate.unitOwner, tNameplate.eDisposition, tNameplate)
 			end
-			fnDrawCastBar(self, tNameplate)
 			fnDrawVulnerable(self, tNameplate)
+			fnDrawCastBar(self, tNameplate)
+			
 		end
 	end
 end
@@ -882,8 +883,6 @@ function BenikUI_Nameplates:DrawVulnerable(tNameplate) -- Every frame
 			tNameplate.wnd.vulnerableVulnFill:SetMax(tNameplate.nVulnerableTime)
 			tNameplate.wnd.vulnerableVulnFill:SetProgress(nVulnerable)
 			bShow = true
-			local Option = self.Options.db.profile.Nameplates
-			tNameplate.wnd.healthBar:SetBarColor(Option.Moo)
 		end
 	end
 
@@ -1058,6 +1057,12 @@ function BenikUI_Nameplates:DrawHealthShieldBar(wndHealth, unitOwner, eDispositi
 		nHealthTintType = 1
 	else
 		tNameplate.wnd.healthBar:SetBarColor(Option.fullHealth)
+	end
+	
+	local nNewVulnerabilityTime = unitOwner:GetCCStateTimeRemaining(Unit.CodeEnumCCState.Vulnerability) or 0
+
+	if nNewVulnerabilityTime > 0 then
+		tNameplate.wnd.healthBar:SetBarColor(Option.Moo)
 	end
 
 	if nHealthTintType ~= tNameplate.nHealthTintType then

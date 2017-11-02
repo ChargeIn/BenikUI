@@ -447,9 +447,9 @@ function BenikUI_Unitframes:UpdatedFrame(wndUnit, newUnit,name)
 	healthBar:SetMax(nMaxHealth)
 	healthBar:SetProgress(nHealth)
 	Bars:FindChild("Health:HealthEditBox"):SetText(NumberToText(nHealth))
-	if nHealth/nMaxHealth >= 0.75 then
+	if nHealth/nMaxHealth >= 0.5 then
 		healthBar:SetBarColor(Options[name].fullHealth)
-	elseif nHealth/nMaxHealth >= 0.25 then
+	elseif nHealth/nMaxHealth >= 0.3 then
 		healthBar:SetBarColor(Options[name].halfHealth)
 	else
 		healthBar:SetBarColor(Options[name].lowHealth)

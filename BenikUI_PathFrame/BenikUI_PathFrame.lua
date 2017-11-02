@@ -48,6 +48,7 @@ function BenikUI_PathFrame:OnLoad()
 
 	self.nSelectedPathId = nil
 	self.bHasPathAbilities = false
+	self.ActionBar = Apollo.GetAddon("BenikUI_ActionBar")
 end
 
 function BenikUI_PathFrame:OnSave(eType)
@@ -90,6 +91,10 @@ function BenikUI_PathFrame:GetAsyncLoadStatus()
 	if not Tooltip and Tooltip.GetSpellTooltipForm then
 		return Apollo.AddonLoadStatus.Loading
 	end
+	
+	if self.ActionBar.wndMain == nil then
+		return Apollo.AddonLoadStatus.Loading
+	end
 
 	if self:OnAsyncLoad() then
 		return Apollo.AddonLoadStatus.Loaded
@@ -99,13 +104,6 @@ function BenikUI_PathFrame:GetAsyncLoadStatus()
 end
 
 function BenikUI_PathFrame:OnAsyncLoad()
-	self.dTimer = ApolloTimer.Create(0.3,false, "DelayedLoad",self)
-	self.dTimer:Start()
-	
-	return true
-end
-
-function BenikUI_PathFrame:DelayedLoad()
 	if not Apollo.GetAddon("BenikUI_ActionBar") or not Apollo.GetAddon("Abilities") then
 		return
 	end
@@ -118,9 +116,8 @@ function BenikUI_PathFrame:DelayedLoad()
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 				"OnTutorial_RequestUIAnchor", self)
 
 	Apollo.RegisterTimerHandler("RefreshPathTimer", 						"DrawPathAbilityList", self)
-	local ActionBar = Apollo.GetAddon("BenikUI_ActionBar")
 	--Load Forms
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathFrameForm", ActionBar.wndMain:FindChild("PathButton"), self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "PathFrameForm", self.ActionBar.wndMain:FindChild("PathButton"), self)
 
 	self.wndMenu = self.wndMain:FindChild("PathSelectionMenu")
 	self.wndMenu:Show(false)
@@ -139,7 +136,9 @@ function BenikUI_PathFrame:DelayedLoad()
 	end
 
 	self:DrawPathAbilityList()
+	return true
 end
+
 -----------------------------------------------------------------------------------------------
 -- BenikUI_PathFrame Functions
 -----------------------------------------------------------------------------------------------

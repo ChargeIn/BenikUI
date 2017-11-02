@@ -729,6 +729,23 @@ function BenikUI_ActionBar:OpenMountsCustomization()
 end
 
 
+function BenikUI_ActionBar:SwitchAS( wndHandler, wndControl, eMouseButton )
+	local name = wndControl:GetName()
+	local LAS = AbilityBook.GetCurrentSpec()
+	if name == "LeftAS" then
+		if LAS > 1 then
+			AbilityBook.SetCurrentSpec(LAS-1)
+		else
+			AbilityBook.SetCurrentSpec(4)
+		end
+	else
+		if LAS == 4 then
+			AbilityBook.SetCurrentSpec(1)
+		else
+			AbilityBook.SetCurrentSpec(LAS +1)
+		end
+	end
+end
 
 local ActionBarFrameInst = BenikUI_ActionBar:new()
 ActionBarFrameInst:Init()
