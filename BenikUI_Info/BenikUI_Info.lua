@@ -65,10 +65,12 @@ function BenikUI_Info:OnDocLoaded()
 	
 		--Events
 		Apollo.RegisterEventHandler("NextFrame","OnFrame",self)
-
+		
+		--Timer
+		self.UpdateTimer = ApolloTimer.Create(1, true, "OnTimer", self)
 
 		self:LoadWindow()
-		-- Do additional Addon initialization here
+		-- Var
 	end
 end
 
@@ -83,43 +85,37 @@ end
 -----------------------------------------------------------------------------------------------
 function BenikUI_Info:LoadWindow()
 	local MainGrid = self.wndMain:FindChild("MainGrid")
-
-	--[[FPS
-	dt = {
-		["type"]		= "dataFeed",
-		["strLabel"]	= "FPS: ",
-		["crLabel"]		= ApolloColor.new("UI_TextHoloBody"),
-		["crText"]		= ApolloColor.new("white"),
-		["imgIcon"]		= "CRB_Basekit:kitIcon_Holo_HazardProximity",
-		["OnUpdate"]	= function()
-
-			--what about tooltip?
-			--and ops menu? <- put that in a diff part
-
-			local text = round(GameLib.GetFrameRate(), 1)
-			
-			local crText = "ff00ff00" --green
-			if text <= 59 then
-				crText = "ffffff00" --yellow
-			elseif text <= 25 then
-				crText = "ffff0000" --red
+	MainGrid:DestroyChildren()
+	self.List = {}
+	--FPS
+	local FPS = Apollo.LoadForm(self.xmlDoc, "ListItem", MainGrid, self)
+	FPS:FindChild("ProgressBar"):SetMax(70)
+	FPS:FindChild("Text"):SetText("FPS: ")
+	FPS:FindChild("Icon"):SetSprite("")
+	self.List["FPS"] = {
+		wnd = FPS,
+		Update = function(wnd)
+			local fps = round(GameLib.GetFrameRate(), 1)
+			wnd:FindChild("Progress"):SetText(tostring(fps))
+			wnd:FindChild("ProgressBar"):SetProgress(fps)
+			if fps < 20 then
+				wnd:FindChild("Progress"):SetTextColor("BrightRed")
+				wnd:FindChild("ProgressBar"):SetBarColor("BrightRed")
+			elseif fps < 50 then
+				wnd:FindChild("Progress"):SetTextColor("AttributeName")
+				wnd:FindChild("ProgressBar"):SetBarColor("AttributeName")
+			else
+				wnd:FindChild("Progress"):SetTextColor("AddonOk")
+				wnd:FindChild("ProgressBar"):SetBarColor("AddonOk")
 			end
-			self.DataTexts.FPS.crText = crText
-			
-			return text			
-		end
-	}]]
-	local fps = Apollo.LoadForm(self.xmlDoc, "ListItem", MainGrid, self)
-	fps:FindChild("Text"):SetText("FPS: "..tostring(round(GameLib.GetFrameRate(), 1)))
-	fps:FindChild("ProgressBar"):SetMax(200)
-	fps:FindChild("ProgressBar"):SetProgress(round(GameLib.GetFrameRate(), 1))
+		end,
+	}
 end
 
-function BenikUI_Info:OnFrame()
-	local fps = self.wndMain:FindChild("ListItem")
-	fps:FindChild("Text"):SetText("FPS: "..tostring(round(GameLib.GetFrameRate(), 1)))
-	fps:FindChild("ProgressBar"):SetMax(200)
-	fps:FindChild("ProgressBar"):SetProgress(round(GameLib.GetFrameRate(), 1))
+function BenikUI_Info:OnTimer()
+	for i,j in pairs(self.List) do
+		j.Update(j.wnd,j.Text)
+	end
 end
 -----------------------------------------------------------------------------------------------
 -- BenikUI_InfoForm Functions

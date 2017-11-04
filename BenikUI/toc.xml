@@ -5,4 +5,5 @@
     <Form Name="Libs\GeminiColor\GeminiColor.xml"/>
     <Script Name="Libs\GeminiDB\GeminiDB-1.0.lua"/>
     <Script Name="Libs\GeminiColor\GeminiColor.lua"/>
+    <ReplaceAddon Name="XPBar"/>
 </Addon>
