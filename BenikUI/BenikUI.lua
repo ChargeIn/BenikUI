@@ -31,6 +31,15 @@ local tBenikUIDefaults = {
 		general = {
 			ThemeColor = "xkcdOrange",
 		},
+		NeedVsGreed = {
+			Anchor = {378,-689,650,-380},
+			bNonNeedable = true,
+			bDyes = true,
+			bAutoGreed = true,
+			Ilvl = 70,
+			bSign = true,
+			bSurvivalist = true,
+		},
 		Resources = {
 			Engineer = {
 				BarColor = 		"xkcdLightKhaki",

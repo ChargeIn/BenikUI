@@ -110,6 +110,39 @@ function BenikUI_Info:LoadWindow()
 			end
 		end,
 	}
+	
+	--Essences
+	local Number_of_Currencies = 14
+	for i = 11, Number_of_Currencies, 1 do
+		if i ~= 8 then -- 8 = Gold 
+			local Currency = GameLib.GetPlayerCurrency(i)
+			local info =  Currency:GetDenomInfo()[1]
+			local NewCurrency = Apollo.LoadForm(self.xmlDoc, "ListItem", MainGrid, self)
+			NewCurrency:FindChild("Text"):SetText("")
+			NewCurrency:FindChild("Icon"):SetSprite(info.strSprite)
+			NewCurrency:FindChild("ProgressBar"):SetMax(10000)
+			self.List[info.strName] = {
+				wnd = NewCurrency,
+				Update = function(wnd)
+					local nACurrency = GameLib.GetPlayerCurrency(i)
+					local amount = nACurrency:GetAmount()
+					wnd:FindChild("Progress"):SetText(tostring(amount))
+					wnd:FindChild("ProgressBar"):SetProgress(amount)
+					if amount < 2500 then
+						wnd:FindChild("Progress"):SetTextColor("BrightRed")
+						wnd:FindChild("ProgressBar"):SetBarColor("BrightRed")
+					elseif amount < 5000 then
+						wnd:FindChild("Progress"):SetTextColor("AttributeName")
+						wnd:FindChild("ProgressBar"):SetBarColor("AttributeName")
+					else
+						wnd:FindChild("Progress"):SetTextColor("AddonOk")
+						wnd:FindChild("ProgressBar"):SetBarColor("AddonOk")
+					end
+				end
+			}
+		end
+	end
+	MainGrid:ArrangeChildrenHorz()
 end
 
 function BenikUI_Info:OnTimer()
