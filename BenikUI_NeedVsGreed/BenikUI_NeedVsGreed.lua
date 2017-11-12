@@ -131,19 +131,19 @@ end
 
 function BenikUI_NeedVsGreed:OnGroupLoot()
 	self.tLootRolls = GameLib.GetLootRolls()
+	local Grid = self.wndMain:FindChild("Grid")
 	if not self.tLootRolls or #self.tLootRolls <= 0 then
 		self.tLootRolls = nil
+		Grid:DestroyChildren()
 		return
 	end
 	Sound.Play(Sound.PlayUIWindowNeedVsGreedOpen)
-	local Grid = self.wndMain:FindChild("Grid")
 	Grid:DestroyChildren()
 	
 	local Options = self.Options.db.profile.NeedVsGreed
 	
 	--Check Loot for Auto Greed and rules
 	for idx, tCurrentElement in pairs(self.tLootRolls) do
-				
 		--Non needable
 		if Options.bNonNeedable and not GameLib.IsNeedRollAllowed(tCurrentElement.nLootId) then
 			GameLib.RollOnLoot(tCurrentElement.nLootId, false)
@@ -180,14 +180,14 @@ function BenikUI_NeedVsGreed:OnGroupLoot()
 			end
 		end
 		--Gear under ilvl ....
-		if bAutoGreed then
+		if Options.bAutoGreed then
 			local type = tCurrentElement.itemDrop:GetItemFamilyName()
 			local item = tCurrentElement.itemDrop
-			local Ilvl = Options.Ilvl
+			local Ilvl = Options.Ilvl	
 			if type == "Gear" or type == "Armor" or type == "Weapon" then
 				local details = item:GetDetailedInfo()["tPrimary"]
 				local ilvl = details["nItemLevel"]
-				if ilvl <= Ilvl and details["arSpells"] ~= nil then
+				if ilvl <= Ilvl then
 					GameLib.RollOnLoot(tCurrentElement.nLootId, false)
 					self.tLootRolls[idx] = nil
 				end

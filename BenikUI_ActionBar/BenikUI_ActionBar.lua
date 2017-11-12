@@ -171,7 +171,7 @@ function BenikUI_ActionBar:InitializeBars()
 	self.wndArt:Show(true)
 	self.wndMain:Show(true)
 	self.wndBar1:DestroyChildren()
-	self.wndBar2:DestroyChildren()
+	self.wndBar2:FindChild("Grid"):DestroyChildren()
 	self.wndBar3:DestroyChildren()
 
 	-- All the buttons
@@ -185,7 +185,7 @@ function BenikUI_ActionBar:InitializeBars()
 		self.wndMain:FindChild("Mount:EditBox"):SetText(GameLib.GetKeyBinding("Mount"))
 	end
 
-	for idx = 1, 28 do--34 max (reduced to 28 for ebnik ui)
+	for idx = 1, 28 do--34 max (reduced to 28 for benik ui)
 		local wndCurr = nil
 		local wndActionBarBtn = nil
 
@@ -232,23 +232,25 @@ function BenikUI_ActionBar:InitializeBars()
 				self.wndMain:FindChild("PathButton:EditBox"):SetText(GameLib.GetKeyBinding("CastPathAbility"))
 			end
 		elseif idx < 23 then -- 11 to 22
-			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
-			wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-			wndActionBarBtn:SetContentId(idx + 1)
+			if idx < 19 then
+				wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2:FindChild("Grid"), self)
+				wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+				wndActionBarBtn:SetContentId(idx + 1)
+			end
 
 			--hide bars we can't draw due to screen size
-			if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
-				wndCurr:Show(false)
-			end
+			--if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
+			--	wndCurr:Show(false)
+			--end
 		else -- 23 to 34
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar3, self)
 			wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
 			wndActionBarBtn:SetContentId(idx + 1)
-
+			
 			--hide bars we can't draw due to screen size
-			if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
-				wndCurr:Show(false)
-			end
+			--if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
+			--	wndCurr:Show(false)
+			--end
 		end
 
 		self.arBarButtons[idx] = wndActionBarBtn
@@ -256,7 +258,7 @@ function BenikUI_ActionBar:InitializeBars()
 
 	self:ArrangeWithGab(self.wndBar1,5)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"):ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
-	self.wndBar2:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self:ArrangeWithGab(self.wndBar2:FindChild("Grid"),5)--Window.CodeEnumArrangeOrigin.LeftOrTop
 	self:ArrangeWithGab(self.wndBar3,5)
 	self:OnUpdateActionBarTooltipLocation()
 
@@ -269,10 +271,10 @@ function BenikUI_ActionBar:ArrangeWithGab(wnd,gab)
 	local l,t,r,b = wnd:GetAnchorOffsets()
 	local wndHeight = math.abs(b-t)
 	l,t,r,b = children[1]:GetAnchorOffsets()
-	wndHeight = wndHeight - (r-l)
+	wndHeight = wndHeight - math.abs(r-l)
 	for i,j in pairs(children) do
 		local l,t,r,b = j:GetAnchorOffsets()
-		local width = r-l
+		local width = math.abs(r-l)
 		j:SetAnchorOffsets(last,wndHeight,last+width,wndHeight+b)
 		last = last +width +gab;
 	end
@@ -314,7 +316,7 @@ function BenikUI_ActionBar:RedrawBarVisibility()
 	end
 
 	if nLeftVisibility == 1 then --always on
-		self.wndBar2:Show(true)
+		self.wndBar2:Show(false)--self.wndBar2:Show(true)
 	elseif nLeftVisibility == 2 then --always off
 		self.wndBar2:Show(false)
 	elseif nLeftVisibility == 3 then --on in combat

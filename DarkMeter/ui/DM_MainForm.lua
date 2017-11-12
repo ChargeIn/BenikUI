@@ -376,7 +376,7 @@ function MainForm:formatRowOptions(unit, column, rank, maxVal, fightStat)
   options.background = ApolloColor.new("99555555")
   if DMUtils.classes[unit.classId] ~= nil then
     local bg = DMUtils.classes[unit.classId].color
-    options.background = ApolloColor.new(bg[1], bg[2], bg[3], 0.65)--0.3
+    options.background = ApolloColor.new(bg[1], bg[2], bg[3], 0.5)--0.3
   end
 
   --| update bar data | --

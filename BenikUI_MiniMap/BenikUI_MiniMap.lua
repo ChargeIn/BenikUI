@@ -601,17 +601,6 @@ function BenikUI_MiniMap:OnCharacterCreated()
 		self.unitPlayerDisposition = GameLib.GetPlayerUnit()
 	end
 
-	local ePath = self.unitPlayerDisposition:GetPlayerPathType()
-	if ePath == PlayerPathLib.PlayerPathType_Soldier then
-		self.wndMiniMapOptions:FindChild("Image_Soldier"):Show(true)
-	elseif ePath == PlayerPathLib.PlayerPathType_Explorer then
-		self.wndMinimapOptions:FindChild("Image_Explorer"):Show(true)
-	elseif ePath == PlayerPathLib.PlayerPathType_Scientist then
-		self.wndMinimapOptions:FindChild("Image_Scientist"):Show(true)
-	elseif ePath == PlayerPathLib.PlayerPathType_Settler then
-		self.wndMinimapOptions:FindChild("Image_Settler"):Show(true)
-	end
-
 	-- PublicEventStart will catch it if this loads too early
 	for idx, peEvent in pairs(PublicEvent.GetActiveEvents() or {}) do
 		if peEvent:GetEventType() == PublicEvent.PublicEventType_LiveEvent then
