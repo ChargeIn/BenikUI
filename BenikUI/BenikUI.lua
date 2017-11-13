@@ -195,7 +195,12 @@ function BenikUI:Init()
 	local tDependencies = {
 		-- "UnitOrPackageName",
 	}
-    Apollo.RegisterAddon(self, bHasConfigureFunction, strConfigureButtonText, tDependencies)
+    Apollo.RegisterAddon(self, true, "BenikUI", nil)
+end
+
+function BenikUI:OnConfigure()
+--Callback form Optionmenu
+	self:ShowOptions()
 end
  
 
