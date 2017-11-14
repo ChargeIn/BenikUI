@@ -316,7 +316,7 @@ function BenikUI_ActionBar:RedrawBarVisibility()
 	end
 
 	if nLeftVisibility == 1 then --always on
-		self.wndBar2:Show(false)--self.wndBar2:Show(true)
+		self.wndBar2:Show(true)--self.wndBar2:Show(true)
 	elseif nLeftVisibility == 2 then --always off
 		self.wndBar2:Show(false)
 	elseif nLeftVisibility == 3 then --on in combat
@@ -360,14 +360,14 @@ function BenikUI_ActionBar:RedrawBarVisibility()
 	self.wndArt:Show(bActionBarShown)
 	self.wndPotionFlyout:Show(true)--self.wndPotionFlyout:IsShown() and unitPlayer and not unitPlayer:IsInVehicle()
 
-	local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
+	--local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
 
 	if bActionBarShown then
-		local nOffset = bFloatingActionBarShown and -173 or -103
+		--local nOffset = bFloatingActionBarShown and -173 or -103
 
-		g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, nOffset)
+		--g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, nOffset)
 	else
-		g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, -19)
+		--g_wndActionBarResources:SetAnchorOffsets(nLeft, nTop, nRight, -19)
 	end
 end
 
@@ -562,7 +562,7 @@ function BenikUI_ActionBar:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
 	if eWhichBar ~= ActionSetLib.CodeEnumShortcutSet.VehicleBar or not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
-
+	
 	local wndVehicleBar = self.wndMain:FindChild("VehicleBarMain")
 	wndVehicleBar:Show(bIsVisible)
 
@@ -584,13 +584,14 @@ function BenikUI_ActionBar:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
 			for idx = 1, nNumShortcuts do
 				wndVehicleBar:FindChild("ActionBarShortcutContainer" .. idx):Show(true)
 				wndVehicleBar:FindChild("ActionBarShortcutContainer" .. idx):FindChild("ActionBarShortcut." .. idx):Enable(true)
+				wndVehicleBar:FindChild("ActionBarShortcutContainer" .. idx):FindChild("EditBox"):SetText(GameLib.GetKeyBinding("LimitedActionSet"..tostring(idx)))
 			end
 
-			local nLeft, nTop ,nRight, nBottom = wndVehicleBar:FindChild("VehicleBarFrame"):GetAnchorOffsets() -- TODO SUPER HARDCODED FORMATTING
-			wndVehicleBar:FindChild("VehicleBarFrame"):SetAnchorOffsets(nLeft, nTop, nLeft + (58 * nNumShortcuts) + 66, nBottom)
+			--local nLeft, nTop ,nRight, nBottom = wndVehicleBar:FindChild("VehicleBarFrame"):GetParent():GetAnchorOffsets() -- TODO SUPER HARDCODED FORMATTING
+			--wndVehicleBar:FindChild("VehicleBarFrame"):SetAnchorOffsets(nLeft, nTop, nLeft + (58 * nNumShortcuts) + 66, nBottom)
 		end
 
-		wndVehicleBar:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.Middle)
+		--wndVehicleBar:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.Middle)
 
 		self.tCurrentVehicleInfo =
 		{
