@@ -258,7 +258,7 @@ function BenikUI_ActionBar:InitializeBars()
 
 	self:ArrangeWithGab(self.wndBar1,5)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"):ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
-	self:ArrangeWithGab(self.wndBar2:FindChild("Grid"),5)--Window.CodeEnumArrangeOrigin.LeftOrTop
+	self:ArrangeGridWithGab(self.wndBar2:FindChild("Grid"),5)--Window.CodeEnumArrangeOrigin.LeftOrTop
 	self:ArrangeWithGab(self.wndBar3,5)
 	self:OnUpdateActionBarTooltipLocation()
 
@@ -278,7 +278,32 @@ function BenikUI_ActionBar:ArrangeWithGab(wnd,gab)
 		j:SetAnchorOffsets(last,wndHeight,last+width,wndHeight+b)
 		last = last +width +gab;
 	end
+end
 
+function BenikUI_ActionBar:ArrangeGridWithGab(wnd,gab)
+	local last = 0
+	local height = 0
+	local children = wnd:GetChildren()
+	local l,t,r,b = wnd:GetParent():GetAnchorOffsets()
+	local l2,t2,r2,b2 = wnd:GetAnchorOffsets()
+	b = b+b2
+	t = t+t2
+	r = r+r2
+	l = l+l2
+	local wndHeight = math.abs(b-t)
+	local wndWidth = math.abs(r-l)
+	l,t,r,b = children[1]:GetAnchorOffsets()
+	wndHeight = wndHeight - math.abs(r-l)
+	for i,j in pairs(children) do
+		local l,t,r,b = j:GetAnchorOffsets()
+		local width = math.abs(r-l)
+		if last+width > wndWidth then
+			last = 0
+			height = height + math.abs(b-t)+gab
+		end
+		j:SetAnchorOffsets(last,height,last+width,height+b)
+		last = last +width +gab
+	end
 end
 
 function BenikUI_ActionBar:RedrawBarVisibility()
@@ -565,7 +590,7 @@ function BenikUI_ActionBar:ShowVehicleBar(eWhichBar, bIsVisible, nNumShortcuts)
 	
 	local wndVehicleBar = self.wndMain:FindChild("VehicleBarMain")
 	wndVehicleBar:Show(bIsVisible)
-
+	self.wndMain:FindChild("VehicleBarMain:VehicleBarFrame"):Show(bIsVisible)
 	self.wndMain:FindChild("StanceFlyout"):Show(not bIsVisible)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer"):Show(not bIsVisible)
 
