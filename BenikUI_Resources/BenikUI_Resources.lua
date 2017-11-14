@@ -707,6 +707,8 @@ function BenikUI_Resources:OnEngineerPetBtnMouseEnter(wndHandler, wndControl)
 		strHover = Apollo.GetString("CRB_Stop")
 	elseif strWindowName == "ActionBarShortcut.15" then
 		strHover = Apollo.GetString("ClassResources_Engineer_GoTo")
+	else
+		strHover = "Dismiss"
 	end
 	self.tWindowMap["PetText"]:SetText(strHover)
 	wndHandler:SetBGColor("white")
