@@ -39,6 +39,7 @@ function BenikUI_Resources:OnSave(eType)
 	{
 		bShowPet = self.bShowPet,
 		nSaveVersion = knSaveVersion,
+		OffsetsMain = self.OffsetsMain
 	}
 
 	return tSave
@@ -50,6 +51,10 @@ function BenikUI_Resources:OnRestore(eType, tSavedData)
 	end
 
 	self.bShowPet = tSavedData.bShowPet
+	
+	if eType == GameLib.CodeEnumAddonSaveLevel.Character then
+		self.OffsetsMain = tSavedData.OffsetsMain
+	end
 end
 
 function BenikUI_Resources:OnDocumentReady()
@@ -103,6 +108,7 @@ function BenikUI_Resources:OnCharacterCreated()
 	elseif unitPlayer:GetClassId() == GameLib.CodeEnumClass.Stalker then
 		self:OnCreateStalker()
 	end
+	self:SetWindows()
 end
 
 function BenikUI_Resources:LoadOptions(wnd)
@@ -201,7 +207,7 @@ function BenikUI_Resources:OnCreateEsper()
 	self.timerEsperOutOfCombatFade = ApolloTimer.Create(0.5, false, "OnEsperOutOfCombatFade", self)
 	self.timerEsperOutOfCombatFade:Stop()
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "EsperResourceForm", g_wndActionBarResources, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, "EsperResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
@@ -287,7 +293,7 @@ function BenikUI_Resources:OnCreateSlinger()
 	Apollo.RegisterEventHandler("NextFrame", 		"OnSlingerUpdateTimer", self)
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 			"OnSlingerEnteredCombat", self)
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "SlingerResourceForm", g_wndActionBarResources, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, "SlingerResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
@@ -353,7 +359,7 @@ function BenikUI_Resources:OnCreateMedic()
 	Apollo.RegisterEventHandler("NextFrame", 		"OnMedicUpdateTimer", self)
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 			"OnMedicEnteredCombat", self)
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "MedicResourceForm", g_wndActionBarResources, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, "MedicResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
@@ -424,7 +430,7 @@ end
 function BenikUI_Resources:OnCreateStalker()
 	Apollo.RegisterEventHandler("NextFrame", "OnStalkerUpdateTimer", self)
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "StalkerResourceForm", g_wndActionBarResources, self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "StalkerResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
@@ -487,7 +493,7 @@ function BenikUI_Resources:OnCreateWarrior()
 
 	Apollo.RegisterEventHandler("NextFrame", 					"OnWarriorUpdateTimer", self)
 
-	self.wndMain = Apollo.LoadForm(self.xmlDoc, "WarriorResourceForm", g_wndActionBarResources, self)
+	self.wndMain = Apollo.LoadForm(self.xmlDoc, "WarriorResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
@@ -579,7 +585,7 @@ function BenikUI_Resources:OnCreateEngineer()
 	Apollo.RegisterEventHandler("PetStanceChanged", 			"OnPetStanceChanged", self)
 	Apollo.RegisterEventHandler("PetSpawned",					"OnPetSpawned", self)
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "EngineerResourceForm", g_wndActionBarResources, self)
+    self.wndMain = Apollo.LoadForm(self.xmlDoc, "EngineerResourceForm", nil , self)
 	self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
@@ -757,6 +763,13 @@ function BenikUI_Resources:OnGeneratePetCommandTooltip(wndControl, wndHandler, e
 	end
 end
 
+function BenikUI_Resources:SetWindows()
+	if self.OffsetsMain ~= nil then
+		local l,t,r,b = unpack(self.OffsetsMain)
+		self.wndMain:SetAnchorOffsets(l,t,r,b)
+	end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Tutorial anchor request
 ---------------------------------------------------------------------------------------------------
@@ -779,6 +792,15 @@ function BenikUI_Resources:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPo
 	if tAnchorMapping[eAnchor] then
 		Event_FireGenericEvent("Tutorial_ShowCallout", eAnchor, idTutorial, strPopupText, tAnchorMapping[eAnchor])
 	end
+end
+
+---------------------------------------------------------------------------------------------------
+-- EngineerResourceForm Functions
+---------------------------------------------------------------------------------------------------
+
+function BenikUI_Resources:OnMainMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
 end
 
 local ClassResourcesInst = BenikUI_Resources:new()

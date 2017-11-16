@@ -86,6 +86,22 @@ function BenikUI_ActionBar:OnDocumentReady()
 	if GameLib.GetPlayerUnit() ~= nil then
 		self:OnCharacterCreated()
 	end
+	
+	self:SetWindows()
+end
+
+function BenikUI_ActionBar:SetWindows()
+	local l,t,r,b
+
+	if self.OffsetsMain ~= nil then
+		l,t,r,b = unpack(self.OffsetsMain)
+		self.wndMain:SetAnchorOffsets(l,t,r,b)
+	end
+	
+	if self.OffsetsBar2 ~= nil then
+		l,t,r,b = unpack(self.OffsetsBar2)
+		self.wndBar2:SetAnchorOffsets(l,t,r,b)
+	end
 end
 
 function BenikUI_ActionBar:OnSave(eType)
@@ -97,7 +113,9 @@ function BenikUI_ActionBar:OnSave(eType)
 	{
 		nSelectedMount = self.nSelectedMount,
 		nSelectedPotion = self.nSelectedPotion,
-		tVehicleBar = self.tCurrentVehicleInfo
+		tVehicleBar = self.tCurrentVehicleInfo,
+		OffsetsMain = self.OffsetsMain,
+		OffsetsBar2 = self.OffsetsBar2,
 	}
 
 	return tSavedData
@@ -118,6 +136,14 @@ function BenikUI_ActionBar:OnRestore(eType, tSavedData)
 
 	if tSavedData.tVehicleBar then
 		self.tCurrentVehicleInfo = tSavedData.tVehicleBar
+	end
+	
+	if tSavedData.OffsetsMain then
+		self.OffsetsMain = tSavedData.OffsetsMain
+	end
+	
+	if tSavedData.OffsetsBar2 then
+		self.OffsetsBar2 = tSavedData.OffsetsBar2
 	end
 end
 
@@ -773,6 +799,20 @@ function BenikUI_ActionBar:SwitchAS( wndHandler, wndControl, eMouseButton )
 			AbilityBook.SetCurrentSpec(LAS+1)
 		end
 	end
+end
+
+---------------------------------------------------------------------------------------------------
+-- ActionBarFrameForm Functions
+---------------------------------------------------------------------------------------------------
+
+function BenikUI_ActionBar:OnMainMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+end
+
+function BenikUI_ActionBar:OnBar2Move( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsBar2 = {l,t,r,b}
 end
 
 local ActionBarFrameInst = BenikUI_ActionBar:new()
