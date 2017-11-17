@@ -586,7 +586,7 @@ function BenikUI_Resources:OnCreateEngineer()
 	Apollo.RegisterEventHandler("PetSpawned",					"OnPetSpawned", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "EngineerResourceForm", nil , self)
-	self.wndMain:ToFront()
+	--self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop0 - 15, true)
