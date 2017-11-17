@@ -32,15 +32,14 @@ function BenikUI_ShortcutBar:OnLoad()
 end
 
 function BenikUI_ShortcutBar:OnSave(eType)
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
 		return
 	end
 
 	local tSavedData =
 	{
 		nVersion = knVersion,
-		bDocked = self.bDocked,
-		bHorz = self.bHorz,
+		OffsetsMain = self.OffsetsMain
 	}
 
 	return tSavedData
@@ -50,17 +49,11 @@ function BenikUI_ShortcutBar:OnRestore(eType, tSavedData)
 	if tSavedData.nVersion ~= knVersion then
 		return
 	end
-
-	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
-		return
-	end
-
-	if tSavedData.bDocked ~= nil then
-		self.bDocked = tSavedData.bDocked
-	end
-
-	if tSavedData.bHorz ~= nil then
-		self.bHorz = tSavedData.bHorz
+	
+	if eType == GameLib.CodeEnumAddonSaveLevel.Character then
+		if tSavedData.OffsetsMain ~= nil then
+			self.OffsetsMain = tSavedData.OffsetsMain
+		end
 	end
 
 	self.tSavedData = tSavedData
@@ -77,10 +70,10 @@ function BenikUI_ShortcutBar:OnDocumentReady()
 
 	self.tActionBarSettings = {}
 
-	--Floating Bar - Docked
+	--Floating Bar - Need to refactor
 	self.tActionBars = {}
 	for idx = knStartingBar, knMaxBars do
-		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcut", "FixedHudStratumHigh5", self)
+		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcut", nil, self)
 		wndCurrBar:FindChild("ActionBarContainer"):DestroyChildren() -- TODO can remove
 		wndCurrBar:Show(false)
 
@@ -90,271 +83,54 @@ function BenikUI_ShortcutBar:OnDocumentReady()
 			if wndBarItem:FindChild("ActionBarShortcutBtn"):GetContent()["strIcon"] ~= "" then
 				tShortcutCount[idx] = nButton + 1
 			end
-
-			wndCurrBar:FindChild("ActionBarContainer"):ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
+			if nButton <7 then
+				wndBarItem:FindChild("EditBox"):SetText(GameLib.GetKeyBinding("FloatingActionBar_Slot"..tostring(nButton+1)))
+			else
+				wndBarItem:FindChild("EditBox"):SetText("")
+			end
 		end
-
-		wndCurrBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		wndCurrBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
 		self.tActionBars[idx] = wndCurrBar
+		self:ArrangeGridWithGab(wndCurrBar:FindChild("ActionBarContainer"),5)
 	end
-
-	--Floating Bar - Horizontal
-	self.tActionBarsHorz = {}
-	for idx = knStartingBar, knMaxBars do
-		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcutHorz", nil, self)
-		wndCurrBar:FindChild("ActionBarContainer"):DestroyChildren() -- TODO can remove
-		wndCurrBar:Show(false)
-
-		for nButton = 0, 7 do
-			local wndBarItem = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcutItem", wndCurrBar:FindChild("ActionBarContainer"), self)
-			wndBarItem:FindChild("ActionBarShortcutBtn"):SetContentId(idx * 12 + nButton)
-			if wndBarItem:FindChild("ActionBarShortcutBtn"):GetContent()["strIcon"] ~= "" then
-				tShortcutCount[idx] = nButton + 1
-			end
-
-			wndCurrBar:FindChild("ActionBarContainer"):ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
-		end
-
-		wndCurrBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		wndCurrBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-		self.tActionBarsHorz[idx] = wndCurrBar
-	end
-
-	--Floating Bar - Vertical
-	self.tActionBarsVert = {}
-	for idx = knStartingBar, knMaxBars do
-		local wndCurrBar = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcutVert", nil, self)
-		wndCurrBar:FindChild("ActionBarContainer"):DestroyChildren() -- TODO can remove
-		wndCurrBar:Show(false)
-
-		for nButton = 0, 7 do
-			local wndBarItem = Apollo.LoadForm(self.xmlDoc, "ActionBarShortcutItem", wndCurrBar:FindChild("ActionBarContainer"), self)
-			wndBarItem:FindChild("ActionBarShortcutBtn"):SetContentId(idx * 12 + nButton)
-			if wndBarItem:FindChild("ActionBarShortcutBtn"):GetContent()["strIcon"] ~= "" then
-				tShortcutCount[idx] = nButton + 1
-			end
-
-			wndCurrBar:FindChild("ActionBarContainer"):ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
-		end
-
-		wndCurrBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		wndCurrBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-		self.tActionBarsVert[idx] = wndCurrBar
-	end
-
+	
 	for idx = knStartingBar, knMaxBars do
 		self:ShowWindow(idx, IsActionBarSetVisible(idx), tShortcutCount[idx])
 	end
+	
+	self:SetWindows()
 end
 
-function BenikUI_ShortcutBar:GetBarPosition(wndBar)
-	if not wndBar then
-		return {}
-	end
-
-	local tAnchors = {}
-	tAnchors.nLeft, tAnchors.nTop, tAnchors.nRight, tAnchors.nBottom = wndBar:GetAnchorOffsets()
-
-	local tSize = {}
-	tSize.nWidth = wndBar:GetWidth()
-	tSize.nHeight = wndBar:GetHeight()
-
-	local tCenter = {}
-	tCenter.nX = (tAnchors.nLeft + tAnchors.nRight) / 2
-	tCenter.nY = (tAnchors.nTop + tAnchors.nBottom) / 2
-
-	return { tSize = tSize, tCenter = tCenter }
-end
-
-function BenikUI_ShortcutBar:SetBarPosition(wndBar, tArgSize, tArgCenter)
-	if  tArgSize == nil then
-		tArgSize = {}
-	end
-
-	if  tArgCenter == nil then
-		tArgCenter = {}
-	end
-
-	local tPosition = self:GetBarPosition(wndBar)
-
-	local tHalf = {}
-	tHalf.nWidth = (tArgSize.nWidth or tPosition.tSize.nWidth) / 2
-	tHalf.nHeight = (tArgSize.nHeight or tPosition.tSize.nHeight) / 2
-
-	local tCenter = {}
-	tCenter.nX = tArgCenter.nX or tPosition.tCenter.nX
-	tCenter.nY = tArgCenter.nY or tPosition.tCenter.nY
-
-	local tDisplay = Apollo.GetDisplaySize()
-	if tDisplay and tDisplay.nWidth then
-		if tCenter.nX + tHalf.nWidth > tDisplay.nWidth / 2 or tCenter.nX - tHalf.nWidth < tDisplay.nWidth / -2 then
-			tCenter.nX = 0
-		end
-	end
-
-	tAnchors = {
-		nLeft   = tCenter.nX - tHalf.nWidth,
-		nTop    = tCenter.nY - tHalf.nHeight,
-		nRight  = tCenter.nX + tHalf.nWidth,
-		nBottom = tCenter.nY + tHalf.nHeight
-	}
-
-	wndBar:SetAnchorOffsets( tAnchors.nLeft, tAnchors.nTop, tAnchors.nRight, tAnchors.nBottom )
-end
-
-function BenikUI_ShortcutBar:ShowBarDocked(nBar, bIsVisible, nShortcuts)
-	-- set the position of this action bar ignoring overlapping
-	self:SetBarPosition( self.tActionBars[nBar], { nWidth = (nShortcuts * 48) + 136 } )
-
-	local tPosition = self:GetBarPosition(self.tActionBars[nBar])
-
-	-- collect all overlapping bars
-	local arRow = { nBar }
-	local nRowWidth = tPosition.tSize.nWidth
-	local nRowX = tPosition.tCenter.nX
-	for nOtherBar,tActionBar in pairs(self.tActionBars) do
-		if nOtherBar ~= nBar and tActionBar:IsShown() then
-			local tOtherPosition = self:GetBarPosition(nOtherBar)
-
-			if tOtherPosition and tOtherPosition.tCenter and tOtherPosition.tCenter.nY == tPosition.tCenter.nY then
-				nRowWidth = nRowWidth + tOtherPosition.tSize.nWidth
-				nRowX = (nRowX * #arRow + tOtherPosition.tCenter.nX) / (#arRow + 1)
-				arRow[#arRow + 1] = self.tActionBars[nOtherBar]
-			end
-		end
-	end
-
-	-- if there were any overlapping then rearrange all of them
-	if #arRow > 1 then
-		local kOverlap = 4
-
-		local nLeft = nRowX - nRowWidth / 2
-		local tDisplay = Apollo.GetDisplaySize()
-		if tDisplay and tDisplay.nWidth then
-			if nLeft + nRowWidth > tDisplay.nWidth / 2 then
-				nLeft = nRowWidth / -2
-			end
-		end
-		nLeft = nLeft + kOverlap * #arRow
-
-		for nIdx, nTmpBar in pairs(arRow) do
-			local tTmpPosition = self:GetBarPosition(nTmpBar)
-			self:SetBarPosition(nTmpBar, nil, { nX = nLeft + tTmpPosition.tSize.nWidth / 2 } )
-			nLeft = nLeft + tTmpPosition.tSize.nWidth - kOverlap
+function BenikUI_ShortcutBar:SetWindows()
+	SendVarToRover("w", self.OffsetsMain)
+	if self.OffsetsMain ~= nil then
+		local l,t,r,b = unpack(self.OffsetsMain)
+		for idx = knStartingBar, knMaxBars do
+			self.tActionBars[idx]:SetAnchorOffsets(l,t,r,b)
 		end
 	end
 end
 
-function BenikUI_ShortcutBar:ShowBarFloatHorz(nBar, bIsVisible, nShortcuts)
-	-- set the position of this action bar ignoring overlapping
-	self:SetBarPosition( self.tActionBarsHorz[nBar], { nWidth = (nShortcuts * 48) + 136 } )
-
-	local tPosition = self:GetBarPosition(self.tActionBarsHorz[nBar])
-
-	-- collect all overlapping bars
-	local arRow = { nBar }
-	local nRowWidth = tPosition.tSize.nWidth
-	local nRowX = tPosition.tCenter.nX
-	for nOtherBar,tActionBar in pairs(self.tActionBarsHorz) do
-		if nOtherBar ~= nBar and tActionBar:IsShown() then
-			local tOtherPosition = self:GetBarPosition(nOtherBar)
-
-			if tOtherPosition and tOtherPosition.tCenter and tOtherPosition.tCenter.nY == tPosition.tCenter.nY then
-				nRowWidth = nRowWidth + tOtherPosition.tSize.nWidth
-				nRowX = (nRowX * #arRow + tOtherPosition.tCenter.nX) / (#arRow + 1)
-				arRow[#arRow + 1] = self.tActionBarsHorz[nOtherBar]
-			end
-		end
-	end
-
-	-- if there were any overlapping then rearrange all of them
-	if #arRow > 1 then
-		local kOverlap = 4
-
-		local nLeft = nRowX - nRowWidth / 2
-		local tDisplay = Apollo.GetDisplaySize()
-		if tDisplay and tDisplay.nWidth then
-			if nLeft + nRowWidth > tDisplay.nWidth / 2 then
-				nLeft = nRowWidth / -2
-			end
-		end
-		nLeft = nLeft + kOverlap * #arRow
-
-		for nIdx, nTmpBar in pairs(arRow) do
-			local tTmpPosition = self:GetBarPosition(nTmpBar)
-			self:SetBarPosition(nTmpBar, nil, { nX = nLeft + tTmpPosition.tSize.nWidth / 2 } )
-			nLeft = nLeft + tTmpPosition.tSize.nWidth - kOverlap
-		end
-	end
-end
-
-function BenikUI_ShortcutBar:ShowBarFloatVert(nBar, bIsVisible, nShortcuts)
-	-- set the position of this action bar ignoring overlapping
-	self:SetBarPosition( self.tActionBarsVert[nBar], { nHeight = (nShortcuts * 60) + 116 } )
-
-	local tPosition = self:GetBarPosition(self.tActionBarsVert[nBar])
-
-	-- collect all overlapping bars
-	local arRow = { nBar }
-	local nRowHeight = tPosition.tSize.nHeight
-	local nRowY = tPosition.tCenter.nY
-	for nOtherBar,tActionBar in pairs(self.tActionBarsVert) do
-		if nOtherBar ~= nBar and tActionBar:IsShown() then
-			local tOtherPosition = self:GetBarPosition(nOtherBar)
-
-			if tOtherPosition and tOtherPosition.tCenter and tOtherPosition.tCenter.nX == tPosition.tCenter.nX then
-				nRowHeight = nRowHeight + tOtherPosition.tSize.nHeight
-				nRowY = (nRowY * #arRow + tOtherPosition.tCenter.nY) / (#arRow + 1)
-				arRow[#arRow + 1] = self.tActionBarsVert[nOtherBar]
-			end
-		end
-	end
-
-	-- if there were any overlapping then rearrange all of them
-	if #arRow > 1 then
-		local kOverlap = 4
-
-		local nTop = nRowY - nRowHeight / 2
-		local tDisplay = Apollo.GetDisplaySize()
-		if tDisplay and tDisplay.nWidth then
-			if nTop + nRowHeight > tDisplay.nWidth / 2 then
-				nTop = nRowHeight / -2
-			end
-		end
-		nTop = nTop + kOverlap * #arRow
-
-		for nIdx, nTmpBar in pairs(arRow) do
-			local tTmpPosition = self:GetBarPosition(nTmpBar)
-			self:SetBarPosition(nTmpBar, nil, { nY = nTop + tTmpPosition.tSize.nHeight / 2 } )
-			nTop = nTop + tTmpPosition.tSize.nHeight - kOverlap
-		end
-	end
-end
 
 function BenikUI_ShortcutBar:ShowWindow(nBar, bIsVisible, nShortcuts)
-    if self.tActionBarsHorz[nBar] == nil then
+	
+    if self.tActionBars[nBar] == nil then
 		return
 	end
-
+	
 	self.tActionBarSettings[nBar] = {}
 	self.tActionBarSettings[nBar].bIsVisible = bIsVisible
 	self.tActionBarSettings[nBar].nShortcuts = nShortcuts
 
 	if nShortcuts and bIsVisible then
-		--self:ShowBarDocked(nBar, bIsVisible, nShortcuts)
-		self:ShowBarFloatHorz(nBar, bIsVisible, nShortcuts)
-		self:ShowBarFloatVert(nBar, bIsVisible, nShortcuts)
+		self.tActionBars[nBar]:Show(bIsVisible)
 	end
-
+	
 	if not self.bTimerRunning then
 		self.timerShorcutArt:Start()
 		self.bTimerRunning = true
 	end
 
-	self.tActionBars[nBar]:Show(bIsVisible and self.bDocked, not bIsVisible)
-	self.tActionBarsHorz[nBar]:Show(bIsVisible and not self.bDocked and self.bHorz, not bIsVisible)
-	self.tActionBarsVert[nBar]:Show(bIsVisible and not self.bDocked and not self.bHorz, not bIsVisible)
+	self.tActionBars[nBar]:Show(bIsVisible)
 end
 
 function BenikUI_ShortcutBar:OnActionBarShortcutArtTimer()
@@ -371,55 +147,6 @@ function BenikUI_ShortcutBar:OnActionBarShortcutArtTimer()
 	end
 end
 
-function BenikUI_ShortcutBar:OnDockBtn(wndControl, wndHandler)
-	self.bDocked = not self.bDocked
-	self.bHorz = true
-
-	for nbar, tActionBar in pairs(self.tActionBars) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and self.bDocked)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	for nbar, tActionBar in pairs(self.tActionBarsHorz) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	for nbar, tActionBar in pairs(self.tActionBarsVert) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and not self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
-end
-
-function BenikUI_ShortcutBar:OnOrientationBtn(wndControl, wndHandler)
-	self.bDocked = false
-	self.bHorz = not self.bHorz
-
-	for nbar, tActionBar in pairs(self.tActionBars) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and self.bDocked)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	for nbar, tActionBar in pairs(self.tActionBarsHorz) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	for nbar, tActionBar in pairs(self.tActionBarsVert) do
-		tActionBar:Show(self.tActionBarSettings[nbar].bIsVisible and not self.bDocked and not self.bHorz)
-		tActionBar:FindChild("DockBtn"):SetCheck(not self.bDocked)
-		tActionBar:FindChild("OrientationBtn"):SetCheck(not self.bHorz)
-	end
-
-	Event_FireGenericEvent("ShowActionBarShortcutDocked", self.bDocked)
-end
 
 function BenikUI_ShortcutBar:OnGenerateTooltip(wndControl, wndHandler, eType, oArg1, oArg2)
 	local xml = nil
@@ -501,6 +228,41 @@ function BenikUI_ShortcutBar:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, str
 			Event_FireGenericEvent("Tutorial_ShowCallout", eAnchor, idTutorial, strPopupText, wndChild, eOrientationOverride)
 		end
 	end
+end
+
+
+function BenikUI_ShortcutBar:ArrangeGridWithGab(wnd,gab)
+	local last = 0
+	local height = 0
+	local children = wnd:GetChildren()
+	local l,t,r,b = wnd:GetParent():GetAnchorOffsets()
+	local l2,t2,r2,b2 = wnd:GetAnchorOffsets()
+	b = b+b2
+	t = t+t2
+	r = r+r2
+	l = l+l2
+	local wndHeight = math.abs(b-t)
+	local wndWidth = math.abs(r-l)
+	l,t,r,b = children[1]:GetAnchorOffsets()
+	wndHeight = wndHeight - math.abs(r-l)
+	for i,j in pairs(children) do
+		local l,t,r,b = j:GetAnchorOffsets()
+		local width = math.abs(r-l)
+		if last+width > wndWidth then
+			last = 0
+			height = height + math.abs(b-t)+gab
+		end
+		j:SetAnchorOffsets(last,height,last+width,height+b)
+		last = last +width +gab
+	end
+
+---------------------------------------------------------------------------------------------------
+-- ActionBarShortcut Functions
+---------------------------------------------------------------------------------------------------
+end
+function BenikUI_ShortcutBar:OnBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
 end
 
 -----------------------------------------------------------

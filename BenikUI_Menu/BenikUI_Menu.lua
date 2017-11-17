@@ -22,6 +22,14 @@ function BenikUI_Menu:Init()
 end
 
 function BenikUI_Menu:OnSave(eType)
+	if eType == GameLib.CodeEnumAddonSaveLevel.Character then
+		local tSavedData = {
+			nVersion = knVersion,
+			OffsetsMain = self.OffsetsMain,
+		}
+		return tSavedData
+	end
+
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
 		return
 	end
@@ -43,7 +51,13 @@ function BenikUI_Menu:OnRestore(eType, tSavedData)
 	if tSavedData.nVersion ~= knVersion then
 		return
 	end
-
+	
+	if eType == GameLib.CodeEnumAddonSaveLevel.Character then
+		if tSavedData.OffsetsMain ~= nil then
+			 self.OffsetsMain = tSavedData.OffsetsMain
+		end
+	end
+	
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
 		return
 	end
@@ -116,6 +130,15 @@ function BenikUI_Menu:OnDocumentReady()
 	end
 
 	Event_FireGenericEvent("InterfaceMenuListHasLoaded")
+	
+	self:SetWindows()
+end
+
+function BenikUI_Menu:SetWindows()
+	if self.OffsetsMain ~= nil then
+		local l,t,r,b = unpack(self.OffsetsMain) 
+		self.wndMain:SetAnchorOffsets(l,t,r,b)
+	end
 end
 
 function BenikUI_Menu:OnListShow()
@@ -530,6 +553,12 @@ function BenikUI_Menu:GetPinIndex(tName, strValue)
 		end
 	end
 	return nil
+end
+
+
+function BenikUI_Menu:OnMenuMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
 end
 
 local InterfaceMenuListInst = BenikUI_Menu:new()

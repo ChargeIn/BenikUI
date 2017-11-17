@@ -208,7 +208,6 @@ function BenikUI_Resources:OnCreateEsper()
 	self.timerEsperOutOfCombatFade:Stop()
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "EsperResourceForm", nil , self)
-	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop, true)
@@ -294,7 +293,6 @@ function BenikUI_Resources:OnCreateSlinger()
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 			"OnSlingerEnteredCombat", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "SlingerResourceForm", nil , self)
-	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop, true)
@@ -360,7 +358,6 @@ function BenikUI_Resources:OnCreateMedic()
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 			"OnMedicEnteredCombat", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "MedicResourceForm", nil , self)
-	self.wndMain:ToFront()
 
 	local nLeft, nTop, nRight, nBottom = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop, true)
@@ -431,7 +428,6 @@ function BenikUI_Resources:OnCreateStalker()
 	Apollo.RegisterEventHandler("NextFrame", "OnStalkerUpdateTimer", self)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "StalkerResourceForm", nil , self)
-	self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop0 - 15, true)
@@ -494,7 +490,6 @@ function BenikUI_Resources:OnCreateWarrior()
 	Apollo.RegisterEventHandler("NextFrame", 					"OnWarriorUpdateTimer", self)
 
 	self.wndMain = Apollo.LoadForm(self.xmlDoc, "WarriorResourceForm", nil , self)
-	self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop0 - 15, true)
@@ -586,7 +581,6 @@ function BenikUI_Resources:OnCreateEngineer()
 	Apollo.RegisterEventHandler("PetSpawned",					"OnPetSpawned", self)
 
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "EngineerResourceForm", nil , self)
-	--self.wndMain:ToFront()
 
 	local nLeft0, nTop0, nRight0, nBottom0 = self.wndMain:GetRect()
 	Apollo.SetGlobalAnchor("CastingBarBottom", 0.0, nTop0 - 15, true)
