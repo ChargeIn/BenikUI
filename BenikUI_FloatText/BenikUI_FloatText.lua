@@ -158,7 +158,7 @@ end
 function BenikUI_FloatText:LoadOptions(wnd)
 	local MainGrid = wnd:FindChild("MainGrid")
 	self.wndOption = Apollo.LoadForm(self.xmlDoc, "OptionsFrame", MainGrid,self)
-	
+
 	--Filling Options
 	for i,j in pairs(self.Options.db.profile.FloatText) do
 		self.wndOption:FindChild(i):FindChild("Swatch"):SetBGColor(("ff%.6x"):format(j))

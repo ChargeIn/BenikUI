@@ -95,11 +95,11 @@ local tBenikUIDefaults = {
 			},
 		},
 		FloatText = {
-			DMG = 0x00ffff,
-			Crit =  0xfffb93,
-			Heal = 0xb0ff6a,
-			HealShield = 0x6afff3,
-			DMGTaken = 0xe5feff,
+			DMG = 16777215,
+			Crit =  16776960,
+			Heal = 65280,
+			HealShield = 49151,
+			DMGTaken = 8388608,
 			},
 		Nameplates = {
 			fullHealth = 		"xkcdDarkSlateBlue",
@@ -113,11 +113,13 @@ local tBenikUIDefaults = {
 			},
 		Unitframes = {
 			--nText = 2,
-			UnitFrame = 		{-467,-327,-109,-223},
-			AltTargetFrame = 	{-165,-432, 193,-328},
-			TargetFrame =		{ 109,-327, 467,-223},
+			UnitFrame = 		{-446,-327,-110,-270},
+			AltTargetFrame = 	{-165,-432, 170,-375},
+			TargetFrame =		{ 109,-327, 444,-270},
+			DebuffBarPlayer = 	{ 0,-50,0,-26 },
+			DebuffBarTarget = 	{ 0,-50,0,-26 },	
 			General =			{
-				Model =				true,
+				Model =			true,
 				},
 			Player = 			{
 				HealthText =		"white",
@@ -288,6 +290,10 @@ end
 -- when the Cancel button is clicked
 function BenikUI:OnCancel()
 	self.wndMain:Close() -- hide the window
+	local UnitFrames = Apollo.GetAddon("BenikUI_Unitframes")
+	if UnitFrames ~= nil then
+		UnitFrames:HideDebuffBars()
+	end
 end
 
 function BenikUI:OnHomePress( wndHandler, wndControl, eMouseButton )

@@ -148,9 +148,13 @@ function BenikUI_Unitframes:SetWindows()
 	--Unit
 	local l,t,r,b = unpack(WindowOpt.UnitFrame)
 	self.wndUnit:SetAnchorOffsets(l,t,r,b)
+	l,t,r,b = unpack(WindowOpt.DebuffBarPlayer)
+	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetAnchorOffsets(l,t,r,b)
 	--Target
 	l,t,r,b = unpack(WindowOpt.TargetFrame)
 	self.wndTarget:SetAnchorOffsets(l,t,r,b)
+	l,t,r,b = unpack(WindowOpt.DebuffBarTarget)
+	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetAnchorOffsets(l,t,r,b)
 	--AltTarget
 	l,t,r,b = unpack(WindowOpt.AltTargetFrame)
 	self.wndAltTarget:SetAnchorOffsets(l,t,r,b)
@@ -738,13 +742,41 @@ function BenikUI_Unitframes:OnShowModel( wndHandler, wndControl, eMouseButton )
 	end
 end
 
+function BenikUI_Unitframes:OnShowDebuffBar( wndHandler, wndControl, eMouseButton )
+	local Text = wndControl:GetText()
+	local name = wndControl:GetParent():FindChild("Title"):GetText()
+	if Text == "Hide" then
+		wndControl:SetText("Show")
+		self:HideDebuffBars()
+	else
+		wndControl:SetText("Hide")
+		local Window = nil
+		if name == "Player" then
+			Window = self.wndUnit
+		else
+			Window = self.wndTarget
+		end
+		Window:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("AbilitiesSprites:spr_StatVertProgBase")
+	end
+end
 
+function BenikUI_Unitframes:HideDebuffBars()
+	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
+	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
+end
+
+function BenikUI_Unitframes:OnDebuffBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local name = wndControl:GetParent():GetParent():GetParent():GetName()
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	if name == "UnitFrame" then
+		self.Options.db.profile.Unitframes.DebuffBarPlayer = {l,t,r,b}
+	else
+		self.Options.db.profile.Unitframes.DebuffBarTarget = {l,t,r,b}
+	end
+end
 -----------------------------------------------------------------------------------------------
 -- Utils
 -----------------------------------------------------------------------------------------------
-
-
-
 
 -----------------------------------------------------------------------------------------------
 -- BenikUI_Unitframes Instance

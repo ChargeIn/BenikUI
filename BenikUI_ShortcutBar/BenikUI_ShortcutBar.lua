@@ -101,7 +101,6 @@ function BenikUI_ShortcutBar:OnDocumentReady()
 end
 
 function BenikUI_ShortcutBar:SetWindows()
-	SendVarToRover("w", self.OffsetsMain)
 	if self.OffsetsMain ~= nil then
 		local l,t,r,b = unpack(self.OffsetsMain)
 		for idx = knStartingBar, knMaxBars do
