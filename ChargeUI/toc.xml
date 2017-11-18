@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="ChargeUI" Description="A Wildstar version of ElvUI_BenikUI v3">
+    <Script Name="ChargeUI.lua"/>
+    <Form Name="ChargeUI.xml"/>
+    <Form Name="Libs\GeminiColor\GeminiColor.xml"/>
+    <Script Name="Libs\GeminiDB\GeminiDB-1.0.lua"/>
+    <Script Name="Libs\GeminiColor\GeminiColor.lua"/>
+    <ReplaceAddon Name="XPBar"/>
+</Addon>

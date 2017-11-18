@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="ChargeUI_Resources" Description="">
+    <Script Name="ChargeUI_Resources.lua"/>
+    <Form Name="ChargeUI_Resources.xml"/>
+    <ReplaceAddon Name="ClassResources"/>
+</Addon>

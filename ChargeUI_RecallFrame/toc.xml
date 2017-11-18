@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="ChargeUI_RecallFrame" Description="">
+    <Script Name="ChargeUI_RecallFrame.lua"/>
+    <Form Name="ChargeUI_RecallFrame.xml"/>
+    <ReplaceAddon Name="RecallFrame"/>
+</Addon>

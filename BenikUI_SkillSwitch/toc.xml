@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Addon Author="Charge" APIVersion="16" Name="BenikUI_SkillSwitch" Description="">
-    <Script Name="BenikUI_SkillSwitch.lua"/>
-    <Form Name="BenikUI_SkillSwitch.xml"/>
-</Addon>

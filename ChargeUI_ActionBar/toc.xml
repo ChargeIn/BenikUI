@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Charge" APIVersion="16" Name="ChargeUI_ActionBar" Description="">
+    <Script Name="ChargeUI_ActionBar.lua"/>
+    <Form Name="ChargeUI_ActionBar.xml"/>
+    <ReplaceAddon Name="ActionBarFrame"/>
+</Addon>
