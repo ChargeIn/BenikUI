@@ -757,12 +757,19 @@ function ChargeUI_Unitframes:OnShowDebuffBar( wndHandler, wndControl, eMouseButt
 			Window = self.wndTarget
 		end
 		Window:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("AbilitiesSprites:spr_StatVertProgBase")
+		Window:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",true)
+		Window:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",true)
 	end
 end
 
 function ChargeUI_Unitframes:HideDebuffBars()
 	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
+	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",false)
+	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",false)
 	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
+	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",false)
+	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",false)
+	
 end
 
 function ChargeUI_Unitframes:OnDebuffBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
