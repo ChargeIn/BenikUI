@@ -258,7 +258,7 @@ function ChargeUI_Unitframes:LoadPlayer()
 		elseif classID == GameLib.CodeEnumClass.Medic then
 			ClassText:SetText("Medic")
 		else
-			ClassText:SetText("")
+			ClassText:SetText("Stalker")
 		end
 	else
 		ClassText:SetText("")

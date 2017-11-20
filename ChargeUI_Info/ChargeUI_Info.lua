@@ -361,7 +361,7 @@ function ChargeUI_Info:LoadWindow()
 				self.List[Info.strName] = {
 					wnd = wnd,
 					Update = function(wnd)
-						wnd:FindChild("Progress"):SetText(tostring(GameLib.GetPlayerCurrency(i):GetAmount()))
+						wnd:FindChild("Progress"):SetText(tostring(AccountItemLib.GetAccountCurrency(i):GetAmount()))
 					end
 				}
 			end
