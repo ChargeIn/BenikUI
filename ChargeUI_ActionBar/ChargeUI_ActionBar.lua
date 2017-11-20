@@ -77,7 +77,9 @@ function ChargeUI_ActionBar:OnDocumentReady()
 	self.wndArt:Show(false)
 	self.wndMain:Show(false)
 	self.wndPotionFlyout:Show(false)
-
+	
+	self:SetWindows()
+	
 	self.tAnchorMapping =
 	{
 		[GameLib.CodeEnumTutorialAnchor.InnateAbility] 	= self.wndMain:FindChild("StancePopoutBtn"),
@@ -86,8 +88,6 @@ function ChargeUI_ActionBar:OnDocumentReady()
 	if GameLib.GetPlayerUnit() ~= nil then
 		self:OnCharacterCreated()
 	end
-
-	self:SetWindows()
 end
 
 function ChargeUI_ActionBar:SetWindows()
@@ -258,11 +258,9 @@ function ChargeUI_ActionBar:InitializeBars()
 				self.wndMain:FindChild("PathButton:EditBox"):SetText(GameLib.GetKeyBinding("CastPathAbility"))
 			end
 		elseif idx < 23 then -- 11 to 22
-			if idx < 19 then
-				wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2:FindChild("Grid"), self)
-				wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-				wndActionBarBtn:SetContentId(idx + 1)
-			end
+			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2:FindChild("Grid"), self)
+			wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+			wndActionBarBtn:SetContentId(idx + 1)
 
 			--hide bars we can't draw due to screen size
 			--if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
@@ -285,6 +283,7 @@ function ChargeUI_ActionBar:InitializeBars()
 	self:ArrangeWithGab(self.wndBar1,5)
 	self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"):ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
 	self:ArrangeGridWithGab(self.wndBar2:FindChild("Grid"),5)--Window.CodeEnumArrangeOrigin.LeftOrTop
+	self.wndBar2:FindChild("Grid"):Reposition()
 	self:ArrangeWithGab(self.wndBar3,5)
 	self:OnUpdateActionBarTooltipLocation()
 
@@ -316,18 +315,16 @@ function ChargeUI_ActionBar:ArrangeGridWithGab(wnd,gab)
 	t = t+t2
 	r = r+r2
 	l = l+l2
-	local wndHeight = math.abs(b-t)
-	local wndWidth = math.abs(r-l)
-	l,t,r,b = children[1]:GetAnchorOffsets()
-	wndHeight = wndHeight - math.abs(r-l)
+	local wndHeight = b-t
+	local wndWidth = r-l
 	for i,j in pairs(children) do
 		local l,t,r,b = j:GetAnchorOffsets()
-		local width = math.abs(r-l)
+		local width = r-l
 		if last+width > wndWidth then
 			last = 0
-			height = height + math.abs(b-t)+gab
+			height = height + b-t+gab
 		end
-		j:SetAnchorOffsets(last,height,last+width,height+b)
+		j:SetAnchorOffsets(last,height,last+width,height+b-t)
 		last = last +width +gab
 	end
 end
@@ -813,6 +810,7 @@ end
 function ChargeUI_ActionBar:OnBar2Move( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
 	local l,t,r,b = wndControl:GetAnchorOffsets()
 	self.OffsetsBar2 = {l,t,r,b}
+	self:ArrangeGridWithGab(self.wndBar2:FindChild("Grid"),5)
 end
 
 local ActionBarFrameInst = ChargeUI_ActionBar:new()

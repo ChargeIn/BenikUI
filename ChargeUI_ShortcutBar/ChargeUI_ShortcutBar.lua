@@ -69,7 +69,6 @@ function ChargeUI_ShortcutBar:OnDocumentReady()
 	local tShortcutCount = {}
 
 	self.tActionBarSettings = {}
-
 	--Floating Bar - Need to refactor
 	self.tActionBars = {}
 	for idx = knStartingBar, knMaxBars do
@@ -90,13 +89,11 @@ function ChargeUI_ShortcutBar:OnDocumentReady()
 			end
 		end
 		self.tActionBars[idx] = wndCurrBar
-		self:ArrangeGridWithGab(wndCurrBar:FindChild("ActionBarContainer"),5)
 	end
 
 	for idx = knStartingBar, knMaxBars do
 		self:ShowWindow(idx, IsActionBarSetVisible(idx), tShortcutCount[idx])
 	end
-
 	self:SetWindows()
 end
 
@@ -105,6 +102,8 @@ function ChargeUI_ShortcutBar:SetWindows()
 		local l,t,r,b = unpack(self.OffsetsMain)
 		for idx = knStartingBar, knMaxBars do
 			self.tActionBars[idx]:SetAnchorOffsets(l,t,r,b)
+			self:ArrangeGridWithGab(self.tActionBars[idx]:FindChild("ActionBarContainer"),5)
+			self.tActionBars[idx]:FindChild("ActionBarContainer"):Reposition()
 		end
 	end
 end
@@ -234,34 +233,28 @@ function ChargeUI_ShortcutBar:ArrangeGridWithGab(wnd,gab)
 	local last = 0
 	local height = 0
 	local children = wnd:GetChildren()
-	local l,t,r,b = wnd:GetParent():GetAnchorOffsets()
-	local l2,t2,r2,b2 = wnd:GetAnchorOffsets()
-	b = b+b2
-	t = t+t2
-	r = r+r2
-	l = l+l2
-	local wndHeight = math.abs(b-t)
-	local wndWidth = math.abs(r-l)
-	l,t,r,b = children[1]:GetAnchorOffsets()
-	wndHeight = wndHeight - math.abs(r-l)
+	local wndHeight = wnd:GetHeight()
+	local wndWidth = wnd:GetWidth()
 	for i,j in pairs(children) do
 		local l,t,r,b = j:GetAnchorOffsets()
-		local width = math.abs(r-l)
+		local width = r-l
 		if last+width > wndWidth then
 			last = 0
-			height = height + math.abs(b-t)+gab
+			height = height + b-t+gab
 		end
-		j:SetAnchorOffsets(last,height,last+width,height+b)
+		j:SetAnchorOffsets(last,height,last+width,height+b-t)
 		last = last +width +gab
 	end
+end
 
 ---------------------------------------------------------------------------------------------------
 -- ActionBarShortcut Functions
 ---------------------------------------------------------------------------------------------------
-end
+
 function ChargeUI_ShortcutBar:OnBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
 	local l,t,r,b = wndControl:GetAnchorOffsets()
 	self.OffsetsMain = {l,t,r,b}
+	self:ArrangeGridWithGab(wndControl:FindChild("ActionBarContainer"),5)
 end
 
 -----------------------------------------------------------

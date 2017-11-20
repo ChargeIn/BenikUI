@@ -46,6 +46,28 @@ function ChargeUI_Info:Init()
     Apollo.RegisterAddon(self, bHasConfigureFunction, strConfigureButtonText, tDependencies)
 end
 
+function ChargeUI_Info:OnSave(eType)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
+		return
+	end
+
+	local tSavedData =
+	{
+		OffsetsMain = self.OffsetsMain,
+	}
+
+	return tSavedData
+end
+
+function ChargeUI_Info:OnRestore(eType, tSavedData)
+	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
+		return
+	end
+
+	if tSavedData.OffsetsMain then
+		self.OffsetsMain = tSavedData.OffsetsMain
+	end
+end
 
 -----------------------------------------------------------------------------------------------
 -- ChargeUI_Info OnLoad
@@ -78,12 +100,20 @@ function ChargeUI_Info:OnDocLoaded()
 		self.Options:RegisterAddon("Info")
 		--Events
 		Apollo.RegisterEventHandler("NextFrame","OnFrame",self)
-
 		--Timer
 		self.UpdateTimer = ApolloTimer.Create(1, true, "OnTimer", self)
+		
+		self:SetWindow()
 
 		self:LoadWindow()
 		-- Var
+	end
+end
+
+function ChargeUI_Info:SetWindow()
+	if self.OffsetsMain ~= nil then
+		local l,t,r,b = unpack(self.OffsetsMain)
+		self.wndMain:SetAnchorOffsets(l,t,r,b)
 	end
 end
 
@@ -302,13 +332,15 @@ function ChargeUI_Info:LoadWindow()
 			local Currency = GameLib.GetPlayerCurrency(i)
 			local info =  Currency:GetDenomInfo()[1]
 			if Options[info.strName] then
-				local wnd = Apollo.LoadForm(self.xmlDoc, "CashWindowSmall", MainGrid, self)
+				local wnd = Apollo.LoadForm(self.xmlDoc, "ListItem", MainGrid, self)
 				wnd:SetTooltip(info.strName)
-	 			wnd:SetAmount(GameLib.GetPlayerCurrency(i),true)
+	 			wnd:FindChild("Text"):SetText("")
+				wnd:FindChild("Icon"):SetSprite(info.strSprite)
+				wnd:FindChild("Progress"):SetText(tostring(Currency:GetAmount()))
 				self.List[info.strName] = {
 					wnd = wnd,
 					Update = function(wnd)
-						wnd:SetAmount(GameLib.GetPlayerCurrency(i),true)
+						wnd:FindChild("Progress"):SetText(tostring(GameLib.GetPlayerCurrency(i):GetAmount()))
 					end
 				}
 			end
@@ -318,16 +350,18 @@ function ChargeUI_Info:LoadWindow()
 	--Account Currencies
 	for i = 1, 14, 1 do
 		if i ~=10 and i ~= 4 then
-			local ACurrency = AccountItemLib.GetAccountCurrency(i)
-			local AInfo =  ACurrency:GetDenomInfo()[1]
-			if Options[AInfo.strName] then
-				local wnd = Apollo.LoadForm(self.xmlDoc, "CashWindowSmall", MainGrid, self)
-				wnd:SetTooltip(AInfo.strName)
-	 			wnd:SetAmount(AccountItemLib.GetAccountCurrency(i))
-				self.List[AInfo.strName] = {
+			local Currency = AccountItemLib.GetAccountCurrency(i)
+			local Info =  Currency:GetDenomInfo()[1]
+			if Options[Info.strName] then
+				local wnd = Apollo.LoadForm(self.xmlDoc, "ListItem", MainGrid, self)
+				wnd:SetTooltip(Info.strName)
+	 			wnd:FindChild("Text"):SetText("")
+				wnd:FindChild("Icon"):SetSprite(Info.strSprite)
+				wnd:FindChild("Progress"):SetText(tostring(Currency:GetAmount()))
+				self.List[Info.strName] = {
 					wnd = wnd,
 					Update = function(wnd)
-						wnd:SetAmount(AccountItemLib.GetAccountCurrency(i))
+						wnd:FindChild("Progress"):SetText(tostring(GameLib.GetPlayerCurrency(i):GetAmount()))
 					end
 				}
 			end
@@ -347,7 +381,8 @@ function ChargeUI_Info:LoadWindow()
 		}
 	end
 
-	MainGrid:ArrangeChildrenHorz(Window.CodeEnumArrangeOrigin.LeftOrTop)
+	self:ArrangeGridWithGab(self.wndMain:FindChild("MainGrid"),0)
+	self.wndMain:FindChild("MainGrid"):Reposition()
 end
 
 function ChargeUI_Info:OptionChanged( wndHandler, wndControl, eMouseButton )
@@ -359,6 +394,24 @@ end
 function ChargeUI_Info:OnTimer()
 	for i,j in pairs(self.List) do
 		j.Update(j.wnd,j.Text)
+	end
+end
+
+function ChargeUI_Info:ArrangeGridWithGab(wnd,gab)
+	local last = 0
+	local height = 0
+	local children = wnd:GetChildren()
+	local wndHeight = wnd:GetHeight()
+	local wndWidth = wnd:GetWidth()
+	for i,j in pairs(children) do
+		local l,t,r,b = j:GetAnchorOffsets()
+		local width = j:GetWidth()
+		if last+width > wndWidth and (last ~= 0 or height ~= 0) then
+			last = 0
+			height = height + b-t+gab
+		end
+		j:SetAnchorOffsets(last,height,last+width,height+b-t)
+		last = last +width +gab
 	end
 end
 -----------------------------------------------------------------------------------------------
@@ -374,6 +427,13 @@ function ChargeUI_Info:OnCancel()
 	self.wndMain:Close() -- hide the window
 end
 
+
+function ChargeUI_Info:OnBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
+	local l,t,r,b = wndControl:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+	self:ArrangeGridWithGab(self.wndMain:FindChild("MainGrid"),0)
+	self.wndMain:FindChild("MainGrid"):Reposition()
+end
 
 -----------------------------------------------------------------------------------------------
 -- ChargeUI_Info Instance
