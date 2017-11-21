@@ -105,6 +105,11 @@ function ChargeUI_ShortcutBar:SetWindows()
 			self:ArrangeGridWithGab(self.tActionBars[idx]:FindChild("ActionBarContainer"),5)
 			self.tActionBars[idx]:FindChild("ActionBarContainer"):Reposition()
 		end
+	else
+		for idx = knStartingBar, knMaxBars do
+			self:ArrangeGridWithGab(self.tActionBars[idx]:FindChild("ActionBarContainer"),5)
+			self.tActionBars[idx]:FindChild("ActionBarContainer"):Reposition()
+		end
 	end
 end
 
