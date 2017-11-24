@@ -98,10 +98,38 @@ function ChargeUI_NeedVsGreed:OnDocLoaded()
 	end
 end
 
+function ChargeUI_NeedVsGreed:StartCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(true)
+	self.wndMain:SetStyle("IgnoreMouse",false)
+	self.wndMain:SetStyle("Moveable",true)
+	self.wndMain:SetStyle("Sizable",true)
+end
+
+function ChargeUI_NeedVsGreed:EndCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(false)
+	self.wndMain:SetStyle("IgnoreMouse",true)
+	self.wndMain:SetStyle("Moveable",false)
+	self.wndMain:SetStyle("Sizable",false)
+end
+
+function ChargeUI_NeedVsGreed:SaveWindows()
+	local l,t,r,b = self.wndMain:GetAnchorOffsets()
+	self.Options.db.profile.NeedVsGreed.Anchor = {l,t,r,b}
+end
+
+function ChargeUI_NeedVsGreed:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndControl:GetParent())
+	end
+end
+
 function ChargeUI_NeedVsGreed:SetWindows()
 	local l,t,r,b = unpack(self.Options.db.profile.NeedVsGreed.Anchor)
 	self.wndMain:SetAnchorOffsets(l,t,r,b)
 end
+
+
 
 function ChargeUI_NeedVsGreed:SetTheme()
 end
@@ -394,6 +422,7 @@ function ChargeUI_NeedVsGreed:OnShowMain( wndHandler, wndControl, eMouseButton )
 		wndHandler:SetText("Show")
 	end
 end
+
 
 -----------------------------------------------------------------------------------------------
 -- ChargeUI_NeedVsGreed Instance

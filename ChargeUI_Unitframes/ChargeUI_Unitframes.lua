@@ -97,16 +97,25 @@ function ChargeUI_Unitframes:OnDocLoaded()
 
 	if self.xmlDoc ~= nil and self.xmlDoc:IsLoaded() then
 	    self.wndUnit = Apollo.LoadForm(self.xmlDoc, "UnitFrame", nil, self)
+		self.UnitFrameHarmBuffBar = Apollo.LoadForm(self.xmlDoc, "HarmBuffBar", nil, self)
+		self.UnitFrameHarmBuffBar:SetName("Unit")
 		self.wndTarget = Apollo.LoadForm(self.xmlDoc, "TargetFrame", nil, self)
+		self.TargetFrameHarmBuffBar = Apollo.LoadForm(self.xmlDoc, "HarmBuffBar", nil, self)
+		self.TargetFrameHarmBuffBar:SetName("Target")
 		self.wndAltTarget = Apollo.LoadForm(self.xmlDoc, "TargetFrame", nil, self)
+		self.AltTargetFrameHarmBuffBar = Apollo.LoadForm(self.xmlDoc, "HarmBuffBar", nil, self)
+		self.AltTargetFrameHarmBuffBar:SetName("AltTarget")
 		self.wndAltTarget:SetName("AltTargetFrame")
+		self.wndAltTarget:FindChild("MouseCatcher"):SetText("AltTarget Frame")
+		self.wndAltTarget:FindChild("MouseCatcherToT"):SetText("AltTarget ToT Frame")
 		self.Options = Apollo.GetAddon("ChargeUI")
 		if self.Options == nil then
 			Apollo.AddAddonErrorText(self, "Could not find main BanikUi Window.")
 			return
 		end
-		self.wndUnit:ToFront()
 	    self.wndUnit:Show(true, true)
+		self.UnitFrameHarmBuffBar:Show(true,true)
+		self.TargetFrameHarmBuffBar:Show(true,true)
 		self.wndTarget:Show(false,true)
 		self.wndAltTarget:Show(false,true)
 		self.wndOption = nil
@@ -143,21 +152,159 @@ end
 -----------------------------------------------------------------------------------------------
 -- Functions
 -----------------------------------------------------------------------------------------------
+
+function ChargeUI_Unitframes:StartCustomise()
+	self.wndUnit:FindChild("MouseCatcher"):Show(true)
+	self.wndUnit:SetStyle("IgnoreMouse",false)
+	self.wndUnit:SetStyle("Moveable",true)
+	self.wndUnit:SetStyle("Sizable",true)
+	
+	self.UnitFrameHarmBuffBar:FindChild("MouseCatcher"):Show(true)
+	self.UnitFrameHarmBuffBar:SetStyle("IgnoreMouse",false)
+	self.UnitFrameHarmBuffBar:SetStyle("Moveable",true)
+	self.UnitFrameHarmBuffBar:SetStyle("Sizable",true)
+	
+	self.wndTarget:Show(true)
+	self.wndTarget:FindChild("MouseCatcher"):Show(true)
+	self.wndTarget:SetStyle("IgnoreMouse",false)
+	self.wndTarget:SetStyle("Moveable",true)
+	self.wndTarget:SetStyle("Sizable",true)
+	
+	self.TargetFrameHarmBuffBar:Show(true)
+	self.TargetFrameHarmBuffBar:FindChild("MouseCatcher"):Show(true)
+	self.TargetFrameHarmBuffBar:SetStyle("IgnoreMouse",false)
+	self.TargetFrameHarmBuffBar:SetStyle("Moveable",true)
+	self.TargetFrameHarmBuffBar:SetStyle("Sizable",true)
+	
+	self.wndTarget:FindChild("ToT"):Show(true)
+	self.wndTarget:FindChild("ToT:MouseCatcherToT"):Show(true)
+	self.wndTarget:FindChild("ToT"):SetStyle("IgnoreMouse",false)
+	self.wndTarget:FindChild("ToT"):SetStyle("Moveable",true)
+	self.wndTarget:FindChild("ToT"):SetStyle("Sizable",true)
+	
+	self.wndAltTarget:Show(true)
+	self.wndAltTarget:FindChild("MouseCatcher"):Show(true)
+	self.wndAltTarget:SetStyle("IgnoreMouse",false)
+	self.wndAltTarget:SetStyle("Moveable",true)
+	self.wndAltTarget:SetStyle("Sizable",true)
+	
+	self.AltTargetFrameHarmBuffBar:Show(true)
+	self.AltTargetFrameHarmBuffBar:FindChild("MouseCatcher"):Show(true)
+	self.AltTargetFrameHarmBuffBar:SetStyle("IgnoreMouse",false)
+	self.AltTargetFrameHarmBuffBar:SetStyle("Moveable",true)
+	self.AltTargetFrameHarmBuffBar:SetStyle("Sizable",true)
+	
+	self.wndAltTarget:FindChild("ToT"):Show(true)
+	self.wndAltTarget:FindChild("ToT:MouseCatcherToT"):Show(true)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("IgnoreMouse",false)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("Moveable",true)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("Sizable",true)
+end
+
+function ChargeUI_Unitframes:EndCustomise()
+	self.wndUnit:FindChild("MouseCatcher"):Show(false)
+	self.wndUnit:SetStyle("IgnoreMouse",true)
+	self.wndUnit:SetStyle("Moveable",false)
+	self.wndUnit:SetStyle("Sizable",false)
+	
+	self.UnitFrameHarmBuffBar:FindChild("MouseCatcher"):Show(false)
+	self.UnitFrameHarmBuffBar:SetStyle("IgnoreMouse",true)
+	self.UnitFrameHarmBuffBar:SetStyle("Moveable",false)
+	self.UnitFrameHarmBuffBar:SetStyle("Sizable",false)
+	
+	if self.unitTarget == nil then
+		self.wndTarget:Show(false)
+	end
+	self.wndTarget:FindChild("MouseCatcher"):Show(false)
+	self.wndTarget:SetStyle("IgnoreMouse",true)
+	self.wndTarget:SetStyle("Moveable",false)
+	self.wndTarget:SetStyle("Sizable",false)
+	
+	if self.unitTarget == nil then
+		self.TargetFrameHarmBuffBar:Show(false)
+	end
+	self.TargetFrameHarmBuffBar:FindChild("MouseCatcher"):Show(false)
+	self.TargetFrameHarmBuffBar:SetStyle("IgnoreMouse",true)
+	self.TargetFrameHarmBuffBar:SetStyle("Moveable",false)
+	self.TargetFrameHarmBuffBar:SetStyle("Sizable",false)
+	 
+	self.wndTarget:FindChild("ToT:MouseCatcherToT"):Show(false)
+	self.wndTarget:FindChild("ToT"):SetStyle("IgnoreMouse",true)
+	self.wndTarget:FindChild("ToT"):SetStyle("Moveable",false)
+	self.wndTarget:FindChild("ToT"):SetStyle("Sizable",false)
+	
+	
+	if self.unitAltTarget== nil then
+		self.wndAltTarget:Show(false)
+	end
+	self.wndAltTarget:FindChild("MouseCatcher"):Show(false)
+	self.wndAltTarget:SetStyle("IgnoreMouse",true)
+	self.wndAltTarget:SetStyle("Moveable",false)
+	self.wndAltTarget:SetStyle("Sizable",false)
+	
+	if self.unitAltTarget == nil then
+		self.AltTargetFrameHarmBuffBar:Show(false)
+	end
+	self.AltTargetFrameHarmBuffBar:FindChild("MouseCatcher"):Show(false)
+	self.AltTargetFrameHarmBuffBar:SetStyle("IgnoreMouse",true)
+	self.AltTargetFrameHarmBuffBar:SetStyle("Moveable",false)
+	self.AltTargetFrameHarmBuffBar:SetStyle("Sizable",false)	
+	
+	self.wndAltTarget:FindChild("ToT:MouseCatcherToT"):Show(false)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("IgnoreMouse",true)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("Moveable",false)
+	self.wndAltTarget:FindChild("ToT"):SetStyle("Sizable",false)
+end
+
+function ChargeUI_Unitframes:SaveWindows()
+	--Unit Frame
+	local l,t,r,b = self.wndUnit:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.UnitFrame = {l,t,r,b}
+	--Target Frame
+	l,t,r,b = self.wndTarget:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.TargetFrame = {l,t,r,b}
+	--AltTarget Frame
+	l,t,r,b = self.wndAltTarget:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.AltTargetFrame = {l,t,r,b}
+	--Unit DebuffBar
+	l,t,r,b = self.UnitFrameHarmBuffBar:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.HarmBuffBarPlayer = {l,t,r,b} 
+	--Target DebuffBar
+	l,t,r,b = self.TargetFrameHarmBuffBar:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.HarmBuffBarTarget = {l,t,r,b}
+	--AltTarget DebuffBar   
+	l,t,r,b = self.AltTargetFrameHarmBuffBar:GetAnchorOffsets()
+	self.Options.db.profile.Unitframes.HarmBuffBarAltTarget = {l,t,r,b}  
+end
+
+function ChargeUI_Unitframes:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndControl:GetParent())
+	end
+end
+
 function ChargeUI_Unitframes:SetWindows()
 	local WindowOpt = self.Options.db.profile.Unitframes
+	
+	self.TargetFrameHarmBuffBar:FindChild("MouseCatcher"):SetText("Target DebuffBar")
+	self.UnitFrameHarmBuffBar:FindChild("MouseCatcher"):SetText("Player DebuffBar")
+	self.AltTargetFrameHarmBuffBar:FindChild("MouseCatcher"):SetText("AltTarget DebuffBar")
 	--Unit
 	local l,t,r,b = unpack(WindowOpt.UnitFrame)
 	self.wndUnit:SetAnchorOffsets(l,t,r,b)
-	l,t,r,b = unpack(WindowOpt.DebuffBarPlayer)
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetAnchorOffsets(l,t,r,b)
+	l,t,r,b = unpack(WindowOpt.HarmBuffBarPlayer)
+	self.UnitFrameHarmBuffBar:SetAnchorOffsets(l,t,r,b)
 	--Target
 	l,t,r,b = unpack(WindowOpt.TargetFrame)
 	self.wndTarget:SetAnchorOffsets(l,t,r,b)
-	l,t,r,b = unpack(WindowOpt.DebuffBarTarget)
-	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetAnchorOffsets(l,t,r,b)
+	l,t,r,b = unpack(WindowOpt.HarmBuffBarTarget)
+	self.TargetFrameHarmBuffBar:SetAnchorOffsets(l,t,r,b)
 	--AltTarget
 	l,t,r,b = unpack(WindowOpt.AltTargetFrame)
 	self.wndAltTarget:SetAnchorOffsets(l,t,r,b)
+	l,t,r,b = unpack(WindowOpt.HarmBuffBarAltTarget)
+	self.AltTargetFrameHarmBuffBar:SetAnchorOffsets(l,t,r,b)
 end
 
 function ChargeUI_Unitframes:SetTheme()
@@ -241,7 +388,7 @@ function ChargeUI_Unitframes:LoadPlayer()
 	--Name
 	self.wndUnit:FindChild("Frame:Bars:Health:Name"):SetText(player:GetName())
 	--BuffBars
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetUnit(player)
+	self.UnitFrameHarmBuffBar:FindChild("HarmBuffBar"):SetUnit(player)
 	self.wndUnit:FindChild("Frame:Bars:BeneBuffBar"):SetUnit(player)
 	--Class
 	local classID = player:GetClassId()
@@ -269,7 +416,10 @@ function ChargeUI_Unitframes:LoadPlayer()
 	if self.unitTarget ~= nil then
 		self:LoadTarget()
 	else
-		self.wndTarget:Show(false,true)
+		if not self.wndTarget:FindChild("MouseCatcher"):IsShown() then
+			self.wndTarget:Show(false,true)
+			self.TargetFrameHarmBuffBar:Show(false,true)
+		end
 	end
 
 	--AltTarget
@@ -292,7 +442,7 @@ function ChargeUI_Unitframes:LoadTarget()
 	--Name
 	self.wndTarget:FindChild("Frame:Bars:Health:Name"):SetText(player:GetName())
 	--BuffBars
-	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetUnit(player)
+	self.TargetFrameHarmBuffBar:FindChild("HarmBuffBar"):SetUnit(player)
 	self.wndTarget:FindChild("Frame:Bars:BeneBuffBar"):SetUnit(player)
 	--Class
 	local classID = player:GetClassId()
@@ -321,6 +471,7 @@ function ChargeUI_Unitframes:LoadTarget()
 	end
 
 	self.wndTarget:Show(true,true)
+	self.TargetFrameHarmBuffBar:Show(true,true)
 end
 
 function ChargeUI_Unitframes:LoadToT()
@@ -355,7 +506,7 @@ function ChargeUI_Unitframes:LoadAltTarget()
 	--Name
 	self.wndAltTarget:FindChild("Frame:Bars:Health:Name"):SetText(player:GetName())
 	--BuffBars
-	self.wndAltTarget:FindChild("Frame:Bars:HarmBuffBar"):SetUnit(player)
+	self.AltTargetFrameHarmBuffBar:FindChild("HarmBuffBar"):SetUnit(player)
 	self.wndAltTarget:FindChild("Frame:Bars:BeneBuffBar"):SetUnit(player)
 	--Class
 	local classID = player:GetClassId()
@@ -381,6 +532,7 @@ function ChargeUI_Unitframes:LoadAltTarget()
 	self.wndAltTarget:FindChild("ToT"):Show(false,true)
 
 	self.wndAltTarget:Show(true,true)
+	self.AltTargetFrameHarmBuffBar:Show(true,true)
 end
 
 
@@ -398,7 +550,10 @@ function ChargeUI_Unitframes:OnFrame()
 			self:LoadTarget()
 			self:UpdatedFrame(self.wndTarget,self.unitTarget,"Target")
 		else
-			self.wndTarget:Show(false,false)
+			if not self.wndTarget:FindChild("MouseCatcher"):IsShown() then
+				self.wndTarget:Show(false,false)
+				self.TargetFrameHarmBuffBar:Show(false)
+			end
 		end
 	else
 		if newTarget ~= nil then
@@ -414,7 +569,8 @@ function ChargeUI_Unitframes:OnFrame()
 			self:LoadAltTarget()
 			self:UpdatedFrame(self.wndAltTarget,self.unitAltTarget,"Focus")
 		else
-			self.wndAltTarget:Show(false,false)
+			self.wndAltTarget:Show(false,true)
+			self.AltTargetFrameHarmBuffBar:Show(false)
 		end
 	else
 		if newAltTarget ~= nil then
@@ -620,7 +776,7 @@ function ChargeUI_Unitframes:OnSlowUpdate()
 		end
 	end
 	--BuffBars
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetUnit(player)
+	self.UnitFrameHarmBuffBar:FindChild("HarmBuffBar"):SetUnit(player)
 	self.wndUnit:FindChild("Frame:Bars:BeneBuffBar"):SetUnit(player)
 end
 
@@ -680,7 +836,19 @@ end
 function ChargeUI_Unitframes:OnWindowMoved( wndHandler, wndControl)
 	local l,t,r,b = wndControl:GetAnchorOffsets()
 	local Name = wndHandler:GetName()
+	local l2,t2,r2,b2 = unpack(self.Options.db.profile.Unitframes[Name])
+	if Name == "UnitFrame" then
+		local l3,t3,r3,b3 = self.UnitFrameHarmBuffBar:GetAnchorOffsets()
+		self.UnitFrameHarmBuffBar:SetAnchorOffsets(l3+(l-l2),t3+(t-t2),r3+(r-r2),b3+(b-b2))
+	elseif Name == "TargetFrame" then
+		local l3,t3,r3,b3 = self.TargetFrameHarmBuffBar:GetAnchorOffsets()
+		self.TargetFrameHarmBuffBar:SetAnchorOffsets(l3+(l-l2),t3+(t-t2),r3+(r-r2),b3+(b-b2))
+	else
+		local l3,t3,r3,b3 = self.AltTargetFrameHarmBuffBar:GetAnchorOffsets()
+		self.AltTargetFrameHarmBuffBar:SetAnchorOffsets(l3+(l-l2),t3+(t-t2),r3+(r-r2),b3+(b-b2))
+	end
 	self.Options.db.profile.Unitframes[Name] = {l,t,r,b}
+	
 end
 
 function ChargeUI_Unitframes:OnListItemClick( wndHandler, wndControl, eMouseButton )
@@ -742,43 +910,15 @@ function ChargeUI_Unitframes:OnShowModel( wndHandler, wndControl, eMouseButton )
 	end
 end
 
-function ChargeUI_Unitframes:OnShowDebuffBar( wndHandler, wndControl, eMouseButton )
-	local Text = wndControl:GetText()
-	local name = wndControl:GetParent():FindChild("Title"):GetText()
-	if Text == "Hide" then
-		wndControl:SetText("Show")
-		self:HideDebuffBars()
-	else
-		wndControl:SetText("Hide")
-		local Window = nil
-		if name == "Player" then
-			Window = self.wndUnit
-		else
-			Window = self.wndTarget
-		end
-		Window:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("AbilitiesSprites:spr_StatVertProgBase")
-		Window:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",true)
-		Window:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",true)
-	end
-end
-
-function ChargeUI_Unitframes:HideDebuffBars()
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",false)
-	self.wndUnit:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",false)
-	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetSprite("")
-	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Moveable",false)
-	self.wndTarget:FindChild("Frame:Bars:HarmBuffBar"):SetStyle("Sizable",false)
-	
-end
-
 function ChargeUI_Unitframes:OnDebuffBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
-	local name = wndControl:GetParent():GetParent():GetParent():GetName()
+	local name = wndControl:GetName()
 	local l,t,r,b = wndControl:GetAnchorOffsets()
-	if name == "UnitFrame" then
-		self.Options.db.profile.Unitframes.DebuffBarPlayer = {l,t,r,b}
+	if name == "Unit" then
+		self.Options.db.profile.Unitframes.HarmBuffBarPlayer = {l,t,r,b}
+	elseif name == "Target" then
+		self.Options.db.profile.Unitframes.HarmBuffBarTarget = {l,t,r,b}
 	else
-		self.Options.db.profile.Unitframes.DebuffBarTarget = {l,t,r,b}
+		self.Options.db.profile.Unitframes.HarmBuffBarAltTarget = {l,t,r,b}
 	end
 end
 -----------------------------------------------------------------------------------------------

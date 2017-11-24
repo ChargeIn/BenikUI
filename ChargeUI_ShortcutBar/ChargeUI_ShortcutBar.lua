@@ -97,6 +97,39 @@ function ChargeUI_ShortcutBar:OnDocumentReady()
 	self:SetWindows()
 end
 
+
+function ChargeUI_ShortcutBar:StartCustomise()
+	for idx = knStartingBar, knStartingBar do
+		self.tActionBars[idx]:Show(true)
+		self.tActionBars[idx]:FindChild("MouseCatcher"):Show(true)
+		self.tActionBars[idx]:SetStyle("IgnoreMouse",false)
+		self.tActionBars[idx]:SetStyle("Moveable",true)
+		self.tActionBars[idx]:SetStyle("Sizable",true)
+	end
+end
+
+function ChargeUI_ShortcutBar:EndCustomise()
+	for idx = knStartingBar, knStartingBar do
+		self.tActionBars[idx]:Show(false)
+		self.tActionBars[idx]:FindChild("MouseCatcher"):Show(false)
+		self.tActionBars[idx]:SetStyle("IgnoreMouse",true)
+		self.tActionBars[idx]:SetStyle("Moveable",false)
+		self.tActionBars[idx]:SetStyle("Sizable",false)
+	end
+end
+
+function ChargeUI_ShortcutBar:SaveWindows()
+	local l,t,r,b = self.tActionBars[knStartingBar]:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+end
+
+function ChargeUI_ShortcutBar:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndControl:GetParent())
+	end
+end
+
 function ChargeUI_ShortcutBar:SetWindows()
 	if self.OffsetsMain ~= nil then
 		local l,t,r,b = unpack(self.OffsetsMain)
@@ -259,7 +292,10 @@ end
 function ChargeUI_ShortcutBar:OnBarMoved( wndHandler, wndControl, nOldLeft, nOldTop, nOldRight, nOldBottom )
 	local l,t,r,b = wndControl:GetAnchorOffsets()
 	self.OffsetsMain = {l,t,r,b}
-	self:ArrangeGridWithGab(wndControl:FindChild("ActionBarContainer"),5)
+	for idx = knStartingBar, knMaxBars do
+		self.tActionBars[idx]:SetAnchorOffsets(l,t,r,b)
+		self:ArrangeGridWithGab(self.tActionBars[idx]:FindChild("ActionBarContainer"),5)
+	end
 end
 
 -----------------------------------------------------------

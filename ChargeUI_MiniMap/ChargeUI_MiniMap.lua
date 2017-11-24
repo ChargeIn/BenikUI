@@ -458,7 +458,7 @@ function ChargeUI_MiniMap:OnDocumentReady()
 
 	Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor", 			"OnTutorial_RequestUIAnchor", self)
 
-	self.wndMain 			= Apollo.LoadForm(self.xmlDoc , "Minimap", "FixedHudStratum", self)
+	self.wndMain 			= Apollo.LoadForm(self.xmlDoc , "Minimap", nil, self)
 	self.wndMinimapOptions 	= Apollo.LoadForm(self.xmlDoc , "MinimapOptions", nil, self)
 	self.wndMiniMap 		= self.wndMain:FindChild("MapContent")
 	self.wndZoneName 		= self.wndMain:FindChild("MapZoneName")
@@ -581,6 +581,40 @@ function ChargeUI_MiniMap:OnDocumentReady()
 		return
 	end
 	self:UpdateTheme()
+	self:SetWindows()
+end
+
+function ChargeUI_MiniMap:SetWindows()
+	if self.OffsetsMain ~= nil then
+		local l,t,r,b = unpack(self.OffsetsMain)
+		self.wndMain:SetAnchorOffsets(l,t,r,b)
+	end
+end
+
+function ChargeUI_MiniMap:StartCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(true)
+	self.wndMain:SetStyle("IgnoreMouse",false)
+	self.wndMain:SetStyle("Moveable",true)
+	self.wndMain:SetStyle("Sizable",true)
+end
+
+function ChargeUI_MiniMap:EndCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(false)
+	self.wndMain:SetStyle("IgnoreMouse",true)
+	self.wndMain:SetStyle("Moveable",false)
+	self.wndMain:SetStyle("Sizable",false)
+end
+
+function ChargeUI_MiniMap:SaveWindows()
+	local l,t,r,b = self.wndMain:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+end
+
+function ChargeUI_MiniMap:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndControl:GetParent())
+	end
 end
 
 function ChargeUI_MiniMap:UpdateTheme()
@@ -684,7 +718,8 @@ function ChargeUI_MiniMap:OnSave(eType)
 		fZoomLevel = self.wndMiniMap:GetZoomLevel(),
 		tToggled = self.tToggledIcons,
 		tSavedShownUnits = tShownUnits,
-		tSavedHiddenUnits = tHiddenUnits
+		tSavedHiddenUnits = tHiddenUnits,
+		OffsetsMain = self.OffsetsMain,
 	}
 
 
@@ -696,6 +731,10 @@ function ChargeUI_MiniMap:OnRestore(eType, tSavedData)
 	self.tSavedData = tSavedData
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Account then
 		return
+	end
+	
+	if tSavedData.OffsetsMain then
+		self.OffsetsMain = tSavedData.OffsetsMain
 	end
 
 	if tSavedData.fZoomLevel then

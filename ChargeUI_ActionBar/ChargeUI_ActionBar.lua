@@ -90,6 +90,44 @@ function ChargeUI_ActionBar:OnDocumentReady()
 	end
 end
 
+function ChargeUI_ActionBar:StartCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(true)
+	self.wndMain:SetStyle("IgnoreMouse",false)
+	self.wndMain:SetStyle("Moveable",true)
+	self.wndMain:SetStyle("Sizable",true)
+	self.wndBar2:FindChild("MouseCatcher"):Show(true)
+	self.wndBar2:SetStyle("IgnoreMouse",false)
+	self.wndBar2:SetStyle("Moveable",true)
+	self.wndBar2:SetStyle("Sizable",true)
+end
+
+function ChargeUI_ActionBar:EndCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(false)
+	self.wndMain:SetStyle("IgnoreMouse",true)
+	self.wndMain:SetStyle("Moveable",false)
+	self.wndMain:SetStyle("Sizable",false)
+	self.wndBar2:FindChild("MouseCatcher"):Show(false)
+	self.wndBar2:SetStyle("IgnoreMouse",true)
+	self.wndBar2:SetStyle("Moveable",false)
+	self.wndBar2:SetStyle("Sizable",false)
+end
+
+function ChargeUI_ActionBar:SaveWindows()
+	local l,t,r,b = self.wndMain:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+
+	l,t,r,b = self.wndBar2:GetAnchorOffsets()
+	self.OffsetsBar2 = {l,t,r,b}
+	self:ArrangeGridWithGab(self.wndBar2:FindChild("Grid"),5)
+end
+
+function ChargeUI_ActionBar:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndHandler:GetParent())
+	end
+end
+
 function ChargeUI_ActionBar:SetWindows()
 	local l,t,r,b
 

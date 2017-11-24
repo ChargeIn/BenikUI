@@ -111,6 +111,33 @@ function ChargeUI_Resources:OnCharacterCreated()
 	self:SetWindows()
 end
 
+
+function ChargeUI_Resources:StartCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(true)
+	self.wndMain:SetStyle("IgnoreMouse",false)
+	self.wndMain:SetStyle("Moveable",true)
+	self.wndMain:SetStyle("Sizable",true)
+end
+
+function ChargeUI_Resources:EndCustomise()
+	self.wndMain:FindChild("MouseCatcher"):Show(false)
+	self.wndMain:SetStyle("IgnoreMouse",true)
+	self.wndMain:SetStyle("Moveable",false)
+	self.wndMain:SetStyle("Sizable",false)
+end
+
+function ChargeUI_Resources:SaveWindows()
+	local l,t,r,b = self.wndMain:GetAnchorOffsets()
+	self.OffsetsMain = {l,t,r,b}
+end
+
+function ChargeUI_Resources:OnMouseCatcherClick( wndHandler, wndControl, eMouseButton, nLastRelativeMouseX, nLastRelativeMouseY )
+	local Addon = Apollo.GetAddon("ChargeUI")
+	if Addon ~= nil then
+		Addon:OnWindowClick(wndControl:GetParent())
+	end
+end
+
 function ChargeUI_Resources:LoadOptions(wnd)
 	local MainGrid = wnd:FindChild("MainGrid")
 	local OptList = wnd:FindChild("OptionsList")
