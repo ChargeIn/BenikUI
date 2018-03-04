@@ -203,7 +203,7 @@ end
 
 function ChargeUI_Unitframes:EndCustomise()
 	self.wndUnit:FindChild("MouseCatcher"):Show(false)
-	self.wndUnit:SetStyle("IgnoreMouse",true)
+	--self.wndUnit:SetStyle("IgnoreMouse",true)
 	self.wndUnit:SetStyle("Moveable",false)
 	self.wndUnit:SetStyle("Sizable",false)
 	
@@ -216,7 +216,7 @@ function ChargeUI_Unitframes:EndCustomise()
 		self.wndTarget:Show(false)
 	end
 	self.wndTarget:FindChild("MouseCatcher"):Show(false)
-	self.wndTarget:SetStyle("IgnoreMouse",true)
+	--self.wndTarget:SetStyle("IgnoreMouse",true)
 	self.wndTarget:SetStyle("Moveable",false)
 	self.wndTarget:SetStyle("Sizable",false)
 	
@@ -238,13 +238,14 @@ function ChargeUI_Unitframes:EndCustomise()
 		self.wndAltTarget:Show(false)
 	end
 	self.wndAltTarget:FindChild("MouseCatcher"):Show(false)
-	self.wndAltTarget:SetStyle("IgnoreMouse",true)
+	--self.wndAltTarget:SetStyle("IgnoreMouse",true)
 	self.wndAltTarget:SetStyle("Moveable",false)
 	self.wndAltTarget:SetStyle("Sizable",false)
 	
 	if self.unitAltTarget == nil then
 		self.AltTargetFrameHarmBuffBar:Show(false)
 	end
+	self.wndAltTarget:FindChild("ToT"):Show(false,true)
 	self.AltTargetFrameHarmBuffBar:FindChild("MouseCatcher"):Show(false)
 	self.AltTargetFrameHarmBuffBar:SetStyle("IgnoreMouse",true)
 	self.AltTargetFrameHarmBuffBar:SetStyle("Moveable",false)
